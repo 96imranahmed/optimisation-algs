@@ -1,0 +1,33 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage}
+\usepackage[normalem]{ulem}
+\usepackage{fancyhdr,graphicx,amsmath,amssymb, mathtools, scrextend, titlesec, enumitem}
+\usepackage[ruled,vlined]{algorithm2e} 
+\usepackage{listings}
+\usepackage{mathtools}
+\usepackage{subcaption}
+\usepackage{float}
+\usepackage{bm}
+\DeclarePairedDelimiter{\norm}{\lVert}{\rVert}
+\DeclarePairedDelimiter{\abs}{\lvert}{\rvert}
+
+\title{4M17 Coursework \#2: Practical Optimisation}
+\author{CCN: \textbf{5673D}}
+\begin{document}
+\maketitle
+
+\begin{enumerate}
+	\item \textbf{Simulated Annealing}
+	\begin{enumerate}
+	\item \textbf{Problem-Specific Implementation Details}
+	\begin{itemize}
+		\item The specific implementation of simulated annealing used for this problem followed many of the suggestions in the 4M17 Simulated Annealing notes. In some cases where there were multiple suggestions, both methods were implemented (and will be evaluated in the next section).
+		\item \textbf{Burn-In}: I implemented a random 'burn-in' where I randomly sampled the function for a few iterations. I chose my start point $x_{\text{init}}$ to be the best random $x$ that resulted in the lowest objective function evaluation. 
+		\item Moreover, I also used these results to form the basis of my \textbf{Initial Temperature}. I explored both using the standard deviation of objective function differences and also setting the temperature such that the probability of accepting an increase in objective function increase was $\bm{P}_{\text{init}}$.
+		\item \textbf{Solution Generation}: New solutions were generated using the method suggested by Parks (1990) and the control variables $x$ were scaled to be in the range of (-1, 1). Alternative methods such as using the constant diagonal matrix $\bm{C}$ were also implemented. However, the method by Vanderbilt (1984) was not implemented owing to the need to use Cholesky decomposition.
+	\end{itemize}
+	\item \textbf{Evaluation on 2D Eggholder Function}
+	\item \textbf{Evaluation on 3D Egghodler Function}
+	\end{enumerate}
+\end{enumerate}
+\end{document}
