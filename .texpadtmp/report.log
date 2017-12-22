@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  21 DEC 2017 19:20
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  22 DEC 2017 02:26
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -387,24 +387,63 @@ LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <12> not available
 (Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 24.
  [1
 
-{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
+{/usr/local/texlive/2016/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+Missing character: There is no â in font cmr12!
+Missing character: There is no ˆ in font cmr12!
+Missing character: There is no ’ in font cmr12!
+ <a_T_1.png, id=14, 462.528pt x 346.896pt>
+File: a_T_1.png Graphic file (type png)
+ <use a_T_1.png>
+Package pdftex.def Info: a_T_1.png used on input line 47.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <a_T_2.png, id=16, 462.528pt x 346.896pt>
+File: a_T_2.png Graphic file (type png)
+ <use a_T_2.png>
+Package pdftex.def Info: a_T_2.png used on input line 51.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <a_T_3.png, id=17, 462.528pt x 346.896pt>
+File: a_T_3.png Graphic file (type png)
+ <use a_T_3.png>
+Package pdftex.def Info: a_T_3.png used on input line 55.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <a_T_4.png, id=18, 462.528pt x 346.896pt>
+File: a_T_4.png Graphic file (type png)
+ <use a_T_4.png>
+Package pdftex.def Info: a_T_4.png used on input line 59.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <a_hist_bin.png, id=19, 462.528pt x 346.896pt>
+File: a_hist_bin.png Graphic file (type png)
+ <use a_hist_bin.png>
+Package pdftex.def Info: a_hist_bin.png used on input line 69.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <a_hist_plot.png, id=20, 462.528pt x 346.896pt>
+File: a_hist_plot.png Graphic file (type png)
+ <use a_hist_plot.png>
+Package pdftex.def Info: a_hist_plot.png used on input line 74.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ [2] <a_search_typical.png, id=25, 462.528pt x 346.896pt>
+File: a_search_typical.png Graphic file (type png)
+ <use a_search_typical.png>
+Package pdftex.def Info: a_search_typical.png used on input line 82.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ [3 <./a_T_1.png> <./a_T_2.png> <./a_T_3.png> <./a_T_4.png>] [4 <./a_hist_bin.png> <./a_hist_plot.png> <./a_search_typical.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 7838 strings out of 493014
- 120510 string characters out of 6133351
- 219292 words of memory out of 5000000
- 11255 multiletter control sequences out of 15000+600000
- 16819 words of font info for 63 fonts, out of 8000000 for 9000
+ 7891 strings out of 493014
+ 121314 string characters out of 6133351
+ 224316 words of memory out of 5000000
+ 11300 multiletter control sequences out of 15000+600000
+ 17119 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 48i,6n,52p,416b,3580s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (1 page, 73812 bytes).
+ 48i,8n,52p,571b,3962s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (4 pages, 2211143 bytes).
 PDF statistics:
- 36 PDF objects out of 1000 (max. 8388607)
- 25 compressed objects within 1 object stream
+ 72 PDF objects out of 1000 (max. 8388607)
+ 41 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 36 words of extra memory for PDF output out of 10000 (max. 10000000)
 

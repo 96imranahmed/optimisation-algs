@@ -17,11 +17,12 @@ ADAPTIVE = True # Use adaptive cooling
 SHOW = True # Show plot
 MIN_ACCEPTANCE = 0.08 # Min solution acceptance ratio
 RESTART_THRESH = 1000 # Restart if no solutions found
-TEMP_WALK_ID = [0, 3, -1] # Desired Walks to be printed
+TEMP_WALK_ID = [0, 3, 6, -1] # Desired Walks to be printed
 HIST_WIDTH = 0.35 # Histogram width
-TOT_EVALS = 50 # Number of runs for results
+TOT_EVALS = 100 # Number of runs for results
 METHOD = 'Simulated Annealing' # Name of current method
 M_L = 5 # Capped number of regions for histogram
+DELTA = 2.5 # For plotting - width of each f(x) calculation
 
 def f_ns(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -163,9 +164,9 @@ def evaluate(should_plot = False):
     if should_plot:
         # Plotting code
         print('NOTE: ', f_star, x_star)
-        delta = 5
-        x_one_mesh = np.arange(-513, 513, delta)
-        x_two_mesh = np.arange(-513, 513, delta)
+
+        x_one_mesh = np.arange(-513, 513, DELTA)
+        x_two_mesh = np.arange(-513, 513, DELTA)
         X_1, X_2 = np.meshgrid(x_one_mesh, x_two_mesh)
         Z = np.zeros(np.shape(X_1))
         for i in range(len(x_one_mesh)):
@@ -185,7 +186,7 @@ def evaluate(should_plot = False):
         pylab.figure()
         pylab.contour(X_1, X_2, Z)
         pylab.plot(hist[:, 0], hist[:, 1], 'o',color='r', zorder = 1)
-        pylab.title('Visted Points (All Temperatures)')
+        pylab.title('Visited Points (All Temperatures)')
         pylab.xlabel('$x_{1}$')
         pylab.ylabel('$x_{2}$')
         pylab.show()
@@ -215,10 +216,18 @@ if __name__ == "__main__":
     print("Lowest Minimum Found at:", x_hist[np.argmin(f_hist)], "Value:", np.min(f_hist))
     print("*********************")
     if not SHOW:
+        x_one_mesh = np.arange(-513, 513, DELTA)
+        x_two_mesh = np.arange(-513, 513, DELTA)
+        X_1, X_2 = np.meshgrid(x_one_mesh, x_two_mesh)
+        Z = np.zeros(np.shape(X_1))
+        for i in range(len(x_one_mesh)):
+            for j in range(len(x_two_mesh)):
+                Z[i, j] = f_ns([x_two_mesh[j], x_one_mesh[i]])
         histogram_list = list(histogram.items())
         histogram_list = list(zip([x[0] for x in histogram_list], [x[1] for x in histogram_list], [len(x[1]) for x in histogram_list]))
         histogram_list.sort(key = lambda t: t[2], reverse= True)
         histo_x = [str(x[0]) + '\n f(x):' + str(np.around(np.mean(x[1]), 1)) for x in histogram_list]
+        histo_x_cord = np.array([x[0] for x in histogram_list])[:M_L]
         histo_y = [len(y[1])/TOT_EVALS for y in histogram_list]
         histo_x = histo_x[:M_L]
         histo_y = histo_y[:M_L]
@@ -233,7 +242,10 @@ if __name__ == "__main__":
         pylab.tight_layout()
         pylab.show()
         pylab.figure()
-        pylab.plot(x_hist[:, 0], x_hist[:, 1], 'o')
+        pylab.contour(X_1, X_2, Z, cmap=pylab.cm.bone)
+        marker_size = [10*2**(10*i) for i in histo_y]
+        pylab.scatter(histo_x_cord[:, 0], histo_x_cord[:, 1], c='r', s = marker_size, edgecolor='black', zorder = 2)
+        # pylab.plot(x_hist[:, 0], x_hist[:, 1], 'o')
         pylab.title(METHOD + ' Evaluations')
         pylab.xlabel('$x_{1}$')
         pylab.ylabel('$x_{2}$')
