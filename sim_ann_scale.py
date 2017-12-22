@@ -14,7 +14,7 @@ L_K = 200 # Length of Markov Chain
 ETA_MIN_SCALE = 0.6 # Proportional (to L_k) length of Markov Chain acceptances
 ALPHA = 0.95 # Alpha for exponential cooling
 ADAPTIVE = True # Use adaptive cooling
-SHOW = False # Show plot
+SHOW = True # Show plot
 MIN_ACCEPTANCE = 0.001 # Min solution acceptance ratio
 RESTART_THRESH = 1000 # Restart if no solutions found
 TEMP_WALK_ID = [0, 3, 6, -1] # Desired Walks to be printed
@@ -113,6 +113,7 @@ def evaluate(should_plot = False):
     return_to_base = 0
     temp_hist = []
     cur_temp_walk = []
+    f_hist = []
     while (env < OBJ_LIM):
         if eta_cur > ETA_MIN_SCALE*L_K or l_cur > L_K:
             eta_cur = 0
@@ -145,6 +146,7 @@ def evaluate(should_plot = False):
             buffer.append(f_x_dash)
             x = x_dash
             f_x = f_x_dash
+            f_hist.append(f_x)
             if f_x < f_star:
                 f_star = f_x
                 x_star = x
@@ -166,7 +168,6 @@ def evaluate(should_plot = False):
     if should_plot:
         # Plotting code
         print('NOTE: ', f_star, x_star)
-
         x_one_mesh = np.arange(-513, 513, DELTA)
         x_two_mesh = np.arange(-513, 513, DELTA)
         X_1, X_2 = np.meshgrid(x_one_mesh, x_two_mesh)
@@ -174,23 +175,30 @@ def evaluate(should_plot = False):
         for i in range(len(x_one_mesh)):
             for j in range(len(x_two_mesh)):
                 Z[i, j] = f_ns([x_two_mesh[j], x_one_mesh[i]])
-        for idx in TEMP_WALK_ID:
-            T, temp_hist_coords = temp_hist[idx]
-            temp_hist_coords = SCALE * np.array(temp_hist_coords)
-            pylab.figure()
-            pylab.contour(X_1, X_2, Z, cmap=pylab.cm.bone)
-            pylab.plot(temp_hist_coords[:, 0], temp_hist_coords[:, 1], '-o',color='r', zorder = 1)
-            pylab.title('Temperature Walk for T = ' + str(np.around(T, 2)))
-            pylab.xlabel('$x_{1}$')
-            pylab.ylabel('$x_{2}$')
-            pylab.show()
-        hist = SCALE * np.array(hist)
+        if DIM == 2:
+            for idx in TEMP_WALK_ID:
+                T, temp_hist_coords = temp_hist[idx]
+                temp_hist_coords = SCALE * np.array(temp_hist_coords)
+                pylab.figure()
+                pylab.contour(X_1, X_2, Z, cmap=pylab.cm.bone)
+                pylab.plot(temp_hist_coords[:, 0], temp_hist_coords[:, 1], '-o',color='r', zorder = 1)
+                pylab.title('Temperature Walk for T = ' + str(np.around(T, 2)))
+                pylab.xlabel('$x_{1}$')
+                pylab.ylabel('$x_{2}$')
+                pylab.show()
+                hist = SCALE * np.array(hist)
+                pylab.figure()
+                pylab.contour(X_1, X_2, Z)
+                pylab.plot(hist[:, 0], hist[:, 1], 'o',color='r', zorder = 1)
+                pylab.title('Visited Points (All Temperatures)')
+                pylab.xlabel('$x_{1}$')
+                pylab.ylabel('$x_{2}$')
+                pylab.show()
         pylab.figure()
-        pylab.contour(X_1, X_2, Z)
-        pylab.plot(hist[:, 0], hist[:, 1], 'o',color='r', zorder = 1)
-        pylab.title('Visited Points (All Temperatures)')
-        pylab.xlabel('$x_{1}$')
-        pylab.ylabel('$x_{2}$')
+        pylab.plot(np.array(f_hist), '-')
+        pylab.title('Objective Function f(x) with # Accepted Iterations')
+        pylab.xlabel('# Accepted Iterations')
+        pylab.ylabel('Objective Function value f(x)')
         pylab.show()
     return f_star, x_star
 
@@ -216,6 +224,7 @@ if __name__ == "__main__":
         print('Current run: ', len(f_hist), 'Value: ', f_cur)
     print("*********************")
     print("Lowest Minimum Found at:", x_hist[np.argmin(f_hist)], "Value:", np.min(f_hist))
+    print("Average Minimum Value:", np.mean(f_hist))
     print("*********************")
     if not SHOW:
         x_one_mesh = np.arange(-513, 513, DELTA)
