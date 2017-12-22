@@ -33,7 +33,7 @@
 	\end{itemize}
 	\item \textbf{Evaluation on 2D Eggholder Function}
 	\begin{itemize}
-		\item To demonstrate that Simulated Annealing is working, I ran my vanilla implementation on the 2D Eggholder function and, after 50 runs, the minimum objective function was determined to be $-959.6406600$ at $[512, 404.23025855]$. 
+		\item To demonstrate that Simulated Annealing is working, I ran my vanilla implementation on the 2D Eggholder function and, after 50 runs, the minimum objective function was determined to be $-959.6406600$ at $[512, 404.23025855]$. In every case, the algorithm terminates far before performing 10000 objective function evaluations (the maximum allowable limit).
 		\item This value is very close (within $< 0.001\%$ error) to the true global minima in this region (listed online as $−959.6406627$).
 		\item In addition, it's also necessary to show that the walks that Simulated Annealing go through at a given temperature are also reasonable. With this in mind, it is clear from Figure \ref{fig1} that the algorithms' walks are sensible; Initially, when the temperature is high, the walk traverses the entire state-space in a seemingly random manner.
 		\item However, as the temperature lowers, the walks become less random/dense and begin to converge to a localised area. At the lowest temperature, the walk traverses only  around the local minimum as in Figure \ref{fig1}d. In this case, the local minimum is in fact global minimum although this isn't necessarily always the case. 

@@ -3,7 +3,7 @@ import math
 import random
 import pylab
 
-DIM = 2
+DIM = 5
 LIM = 1
 SCALE = 512
 PROB_INIT = 0.8 # Initial acceptance probability
@@ -14,8 +14,8 @@ L_K = 200 # Length of Markov Chain
 ETA_MIN_SCALE = 0.6 # Proportional (to L_k) length of Markov Chain acceptances
 ALPHA = 0.95 # Alpha for exponential cooling
 ADAPTIVE = True # Use adaptive cooling
-SHOW = True # Show plot
-MIN_ACCEPTANCE = 0.08 # Min solution acceptance ratio
+SHOW = False # Show plot
+MIN_ACCEPTANCE = 0.001 # Min solution acceptance ratio
 RESTART_THRESH = 1000 # Restart if no solutions found
 TEMP_WALK_ID = [0, 3, 6, -1] # Desired Walks to be printed
 HIST_WIDTH = 0.35 # Histogram width
@@ -160,6 +160,8 @@ def evaluate(should_plot = False):
                 print('Restarting search from current best soln')
         else:
             pass
+    if env >= OBJ_LIM:
+        print('Terminated search due to maximum allowable # objective functions being exceeded')
     x_star = SCALE * x_star
     if should_plot:
         # Plotting code
@@ -241,12 +243,13 @@ if __name__ == "__main__":
         pylab.ylabel('Proportion of runs within region')
         pylab.tight_layout()
         pylab.show()
-        pylab.figure()
-        pylab.contour(X_1, X_2, Z, cmap=pylab.cm.bone)
-        marker_size = [10*2**(10*i) for i in histo_y]
-        pylab.scatter(histo_x_cord[:, 0], histo_x_cord[:, 1], c='r', s = marker_size, edgecolor='black', zorder = 2)
-        # pylab.plot(x_hist[:, 0], x_hist[:, 1], 'o')
-        pylab.title(METHOD + ' Evaluations')
-        pylab.xlabel('$x_{1}$')
-        pylab.ylabel('$x_{2}$')
-        pylab.show()
+        if (DIM == 2):
+            pylab.figure()
+            pylab.contour(X_1, X_2, Z, cmap=pylab.cm.bone)
+            marker_size = [10*2**(10*i) for i in histo_y]
+            pylab.scatter(histo_x_cord[:, 0], histo_x_cord[:, 1], c='r', s = marker_size, edgecolor='black', zorder = 2)
+            # pylab.plot(x_hist[:, 0], x_hist[:, 1], 'o')
+            pylab.title(METHOD + ' Evaluations')
+            pylab.xlabel('$x_{1}$')
+            pylab.ylabel('$x_{2}$')
+            pylab.show()
