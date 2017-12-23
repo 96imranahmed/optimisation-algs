@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  22 DEC 2017 02:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  23 DEC 2017 03:56
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -431,24 +431,64 @@ File: a_f_plot.png Graphic file (type png)
  <use a_f_plot.png>
 Package pdftex.def Info: a_f_plot.png used on input line 89.
 (pdftex.def)             Requested size: 469.75502pt x 352.33655pt.
- [4 <./a_hist_bin.png> <./a_hist_plot.png> <./a_search_typical.png>] [5 <./a_f_plot.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
+ [4 <./a_hist_bin.png> <./a_hist_plot.png> <./a_search_typical.png>] [5 <./a_f_plot.png>]
+Overfull \hbox (2.36252pt too wide) in paragraph at lines 104--105
+[]\OT1/cmr/m/n/12 I eval-u-ated the ef-fec-tive-ness of vary-ing hyper-parameters/implementations
+ []
+
+[6]
+Overfull \hbox (0.17912pt too wide) in paragraph at lines 112--113
+\OT1/cmr/m/n/12 Ex-po-nen-tial Cool-ing Schemes were com-pared (us-ing the hyper-parameters
+ []
+
+<a_cooling_hist.png, id=48, 462.528pt x 346.896pt>
+File: a_cooling_hist.png Graphic file (type png)
+ <use a_cooling_hist.png>
+Package pdftex.def Info: a_cooling_hist.png used on input line 119.
+(pdftex.def)             Requested size: 312.9803pt x 234.74811pt.
+ [7 <./a_cooling_hist.png>] <a_alpha_vary.png, id=54, 462.528pt x 346.896pt>
+File: a_alpha_vary.png Graphic file (type png)
+ <use a_alpha_vary.png>
+Package pdftex.def Info: a_alpha_vary.png used on input line 134.
+(pdftex.def)             Requested size: 341.43306pt x 256.08499pt.
+ [8 <./a_alpha_vary.png>] <a_control_vars.png, id=59, 462.528pt x 346.896pt>
+File: a_control_vars.png Graphic file (type png)
+ <use a_control_vars.png>
+Package pdftex.def Info: a_control_vars.png used on input line 149.
+(pdftex.def)             Requested size: 312.9803pt x 234.74811pt.
+ [9 <./a_control_vars.png>] <a_C_vary.png, id=64, 462.528pt x 346.896pt>
+File: a_C_vary.png Graphic file (type png)
+ <use a_C_vary.png>
+Package pdftex.def Info: a_C_vary.png used on input line 166.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <a_D_vary.png, id=65, 462.528pt x 346.896pt>
+File: a_D_vary.png Graphic file (type png)
+ <use a_D_vary.png>
+Package pdftex.def Info: a_D_vary.png used on input line 171.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ [10 <./a_C_vary.png> <./a_D_vary.png>] <a_l_k.png, id=71, 462.528pt x 346.896pt>
+File: a_l_k.png Graphic file (type png)
+ <use a_l_k.png>
+Package pdftex.def Info: a_l_k.png used on input line 188.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+ [11 <./a_l_k.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 7897 strings out of 493014
- 121399 string characters out of 6133351
- 221324 words of memory out of 5000000
- 11305 multiletter control sequences out of 15000+600000
+ 7934 strings out of 493014
+ 121992 string characters out of 6133351
+ 221366 words of memory out of 5000000
+ 11336 multiletter control sequences out of 15000+600000
  17119 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 48i,8n,52p,571b,3962s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 48i,8n,52p,571b,4024s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (5 pages, 2389596 bytes).
+Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (11 pages, 2677168 bytes).
 PDF statistics:
- 77 PDF objects out of 1000 (max. 8388607)
- 43 compressed objects within 1 object stream
+ 109 PDF objects out of 1000 (max. 8388607)
+ 57 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 71 words of extra memory for PDF output out of 10000 (max. 10000000)
 

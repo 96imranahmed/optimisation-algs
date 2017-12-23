@@ -92,7 +92,107 @@
 		\end{figure}
 
 	\end{itemize}
-	\item \textbf{Evaluation on 3D Egghodler Function}
+	\item \textbf{Evaluation on 5D Eggholder Function}
+	\begin{itemize}
+		\item The 5D Eggholder Functions is a much more challenging problem than its 2D counterpart because there are far more local minima in the same range. As a result, parameters to control temperature annealing for example become far more important because they help to escape local minima. 
+		\item In the 2D case, changing these parameters didn't really make much of a difference due to the limited size of the state-space. However, the 5D case is a $1024^5$-sized [continuous] state-space (as opposed to $1024^2$) and thus these parameters become a lot more important.
+		\item Thus, the main body of this investigation will be focussed around looking at parameters and implementations that, when varied, will have the largest impact on minimising the objective function.
+		\item In general the algorithm performed well although it found multiple areas where the objective function dropped below $-3000$ - indicating, as discussed, a large number of `good' local minima. The lowest recorded value was $-3424.05$ with the following $x$ coordinates: $[431.01,  441.1, 445.6,  453.2, 476.0]$.
+
+		\item \textbf{Evaluating performance:}
+		\begin{itemize}
+			\item I evaluated the effectiveness of varying hyper-parameters/implementations within Simulated Annealing by observing both the minimum and average objective function values across $100$ runs with each implementation.
+			\item Because the minimum overall objective function tends to be dependent on the initialisation of the control variables and thus is highly stochastic, for plots that weren't histograms, I decided to average the \textbf{top 25} values determined at each run as per the \textbf{Best L solutions} proposed in the notes. This process was used in all of the experiments below and is referred to as the 'average minimum objective function value'.
+			\item A more complex system of \textbf{dissimilarity archiving} was also considered (as suggested in the notes to avoid just averaging results from the same funtion minimum).
+			\item However, given the size of the state-space and the results that I observed, a dissimilarity archive was not required - especially given the large number of local minima in this problem. From my observations, there were very few duplicates in minima - even over $100$ runs.
+		\end{itemize}
+		\pagebreak
+		\item \textbf{Temperature Cooling - Adaptive vs. ECS}:
+		\begin{itemize}
+		\item Firstly, the effectiveness of vanilla implementations of the Adaptive and Exponential Cooling Schemes were compared (using the hyper-parameters specified in the notes).
+		\item The \textbf{simple ECS} had an average minimum objective function value $-2599.6$, with a standard deviation of $178.9$ and an overall minimum of $-3096.0$.
+		\item Meanwhile, the \textbf{adaptive cooling} method proposed by Huang had an average of $-2679.7$, with a standard deviation of $202.3$ and an overall minimum of $-3174.7$.
+		\item Figure \ref{fig5} corroborates these results (with another set of runs): the average minimum for adaptive cooling is indeed lower than that of ECS. However, it is necessary to note that this difference is on the order of $100$ which is small in the context of a minimum value in the thousands.
+		\item By printing the true 'alpha' using adaptive cooling, the effective alpha values used in adaptive cooling are significantly smaller than the $0.95$ in ECS which means the decay in accepting increases in the objective function is much more significant. Thus, it is possible that adaptive cooling makes the function more likely to reach a local minimum and thus achieve a lower average objective function.
+		\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{a_cooling_hist}
+		\caption{Histogram of objective function between ECS and Adaptive cooling}
+		\label{fig5}
+		\end{figure}
+		\end{itemize}
+		\pagebreak
+		\item \textbf{Exponential Cooling Scheme - Varying Alpha}
+		\begin{itemize}
+		\item Given the results from the previous experiment, I thought it would be worthwhile to explore varying the $a$ (alpha) parameter in ECS - to see if using a lower alpha would give results that are similar to those from Adaptive Cooling in Figure \ref{fig5}. 
+		\item This was achieved by varying alpha from 0 to 1 at 20 evenly spaced values. The standard deviation and average minimum objective function values were recorded and plotted for each value of alpha and can be seen in Figure \ref{fig6} below.
+		\item From the figure, varying the alpha parameter doesn't have a significant effect on the average minimum value although there is still a noticeable effect. Interestingly, this isn't the same for true minimum value found at each alpha - the value remained in the region of $-3100 - -3200$ with no noticeable pattern.
+		\item Interestingly, alpha values close to 0 give a higher average minimum which makes sense as SA is most likely stuck at some non-optimal local minimum. Similarly, values of alpha near 1 seem to also give a high average minimum which also makes sense as SA is more likely to accept positive changes and thus may not reach a true local minimum. 
+		\item An alpha value of $0.7$ seems to produce the lowest average minimum at $-2731$ which is similar to the value found through adaptive cooling (which also had an effective alpha value roughly in that region).
+		\begin{figure}[H]
+		\centering
+		\includegraphics[width=12cm]{a_alpha_vary}
+		\caption{Average objective function using ECS with varying alpha}
+		\label{fig6}
+		\end{figure}
+		\end{itemize}
+		\pagebreak
+		\item \textbf{Parks' Update vs. Constant Update}	
+		\begin{itemize}
+		\item Given the substantial additional complexity in implementing the process developed by Parks, I wanted to understand its benefits over using a preset matrix $\bm{C}$ to generate the update on $x$. 
+		\item Note, there is additional complexity here because there is a dependence on the magnitude of the $\bm{D}$ matrix, as well as the magnitude of $\bm{C}$ (both of which control the distance between consecutive control variables).
+		\item To adjust for this, I chose the magnitude of each element in $\bm{C}$ to be 512 and each element in $\bm{D}$ to be initially 2. This means that the entire state space can be searched in both implementations (irrespective of $x_{\text{init}}$).
+		\item The results were as follows: using SA with the simple constant $\bm{C}$ matrix gives an average minium objective function value of $-2584.7$ with a overall minimum of $-2994.1$ and a standard deviation of $166.4$. At the same time, the method by Parks' gives an average value of $-2646.7$ with a minimum value of $-3129.8$ and a standard deviation of $186.2$. 
+		\item This indicates that the Parks method is performing slightly better - perhaps due to the fact that $\bm{D}$ is adaptive with every acceptance.
+		\item Figure \ref{fig7} seems to also show that Parks' update method is performing better - with a slight shift in the histogram to a lower average f(x) (which indicates the algorithm is finding `better' minimums by better exploring the state-space). However, the data is slightly more spread apart in Parks' method (compared to the constant matrix) and this may be due to the effect of the variability of the $\bm{D}$ matrix' element magnitudes over time.	\begin{figure}[H]
+		\centering
+		\includegraphics[width=11cm]{a_control_vars}
+		\caption{Histogram of objective function with varying update schemes}
+		\label{fig7}
+		\end{figure}
+		\end{itemize} 
+		\pagebreak
+		\item \textbf{Control Variables: Varying magnitude of elements in $\bm{D}$ \& ${\bm{C}}$}
+		\begin{itemize}
+		\item I also wanted to investigate the effect of varying the magnitude of each of the elements in $\bm{C}$ or $\bm{D}$. Note that in the case of Parks' method, the magnitudes of these elements would change with each successful solution acceptances - nevertheless the initial magnitude would serve as a 'seed' for future updates to the matrix.
+		\item It is clear that varying the magnitude of these elements did not have a significant effect on the results. From Figure \ref{fig8}, there seems to be no clear pattern aside from a zero-magnitude matrix giving a poor result: this is expected as it essentially zeros out any update to $x$ and so the algorithm effectively acts as a random sampler. 
+		\item That being said, the standard deviation of the local average minima does reduce with increasing magnitude in both cases - likely because local state-space effects are less influential. In addition, the higher the magnitude, the (slightly) higher the average minimum f(x) - which indicates the algorithm isn't performing as well.
+		\item To fully verify these results are due to the vanilla SA implementation, I removed burn-in and re-ran the same tests. The trend observed (as in Figure \ref{fig8}) remained the same: this makes sense as I averaged my values over 25 runs and the burn-in period (which itself is random) would be different for each run.
+		\item It can be concluded that as long as the magnitude is non-zero, the SA algorithm is able to suitably traverse the space irrespective of the control variable update matrix magnitude - although, smaller magnitudes seem to perform more reasonably. 
+		\begin {figure}[H]
+		\centering
+		\begin{subfigure}{8cm}
+		\centering
+		\includegraphics[width=8cm]{a_C_vary}
+		\caption{Varying magnitude of constant C matrix}
+		\end{subfigure}%
+		\begin{subfigure}{8cm}
+		\centering
+		\includegraphics[width=8cm]{a_D_vary}
+		\caption{Varying magnitude of variable D matrix}
+		\end{subfigure}
+		\caption{The effect of varying the magnitude of control variable update matrices on the average minimum f(x)}
+		\label{fig8}
+		\end{figure}
+		\end{itemize}
+		\pagebreak
+		\item \textbf{Markov Chain Length}
+		\begin{itemize}
+		\item Temperatures are only updated at the end of each Markov Chain - a time set after either an arbitrary number of trials or alternatively, a threshold number of acceptances which is set to be proportional to the number of trials (as suggested in the notes).
+		\item Thus, it might be expected that a longer Markov Chain might allow for more exploration of the space at the expense of being more likely to leave minima (because the probability of accepting an increase in objective function is higher).
+		\item Meanwhile, a very small Markov chain will decrement T very quickly, meaning that the algorithm will most likely get stuck at a local minimum.
+		\item I chose to test this by again looking at the average minimum objective function across 100 runs with a varying Markov Chain length. It was not worth using the actual minimum objective function across all runs because the values determined are highly stochastic do not depend nearly as much on the underlying structure of the algorithm.
+		\item While there is a significant level of noise in the data (the standard deviations are very large), there is a certain trend as Markov Chains get larger: SA seems to perform more poorly with increase chain length (likely due to the reasons detailed above). 
+		\item The algorithm seems to work best with small-sized chains - although the average minimum objective function value associated with the smallest chain is likely only small due to the fact that the burn-in implementation randomly finds and picks a starting sample that is most likely going to be in a local minima.	\begin{figure}[H]
+		\centering
+		\includegraphics[width=9cm]{a_l_k}
+		\caption{Average Minimum Objective Function with varying Markov Chain Length}
+		\label{fig9}
+		\end{figure}
+		\end{itemize} 
+		\pagebreak
+		
+		\end{itemize}
 	\end{enumerate}
 \end{enumerate}
 \end{document}
