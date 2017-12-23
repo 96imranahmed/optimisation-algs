@@ -15,7 +15,7 @@ L_K = 200 # Length of Markov Chain
 ETA_MIN_SCALE = 0.6 # Proportional (to L_k) length of Markov Chain acceptances
 ALPHA = 0.95 # Alpha for exponential cooling
 ADAPTIVE = True # Use adaptive cooling
-SHOW = False # Show plot
+SHOW = True # Show plot
 MIN_ACCEPTANCE = 0.001 # Min solution acceptance ratio
 RESTART_THRESH = 1000 # Restart if no solutions found
 TEMP_WALK_ID = [0, 3, 6, -1] # Desired Walks to be printed
@@ -66,10 +66,8 @@ def check_accept(df, T, D, u):
         R = np.eye(DIM)*(np.abs(np.matmul(D, u)))
         d_hat = np.sqrt(np.sum(np.square(R)))
         p = np.exp(-1 * df/(T*d_hat))
-        if random.random() < p:
-            return True
-        else:
-            return False
+        guess = random.random()
+        return guess < p
 
 def evaluate(should_plot = False):
     #Initialisations
@@ -140,7 +138,8 @@ def evaluate(should_plot = False):
         env += 1
         f_x_dash = f(x_dash)
         l_cur += 1
-        if check_accept(f_x_dash - f_x, T, D, u):
+        df = f_x_dash - f_x
+        if check_accept(df, T, D, u):
             acc += 1
             hist.append(x_dash)
             cur_temp_walk.append(x_dash)
@@ -162,7 +161,7 @@ def evaluate(should_plot = False):
                 l_cur = 0
                 did_find_sol = False
                 return_to_base = 0
-                # print('Restarting search from current best soln')
+                print('Restarting search from current best soln')
         else:
             pass
     if env >= OBJ_LIM:
@@ -190,14 +189,14 @@ def evaluate(should_plot = False):
                 pylab.xlabel('$x_{1}$')
                 pylab.ylabel('$x_{2}$')
                 pylab.show()
-                hist = SCALE * np.array(hist)
-                pylab.figure()
-                pylab.contour(X_1, X_2, Z)
-                pylab.plot(hist[:, 0], hist[:, 1], 'o',color='r', zorder = 1)
-                pylab.title('Visited Points (All Temperatures)')
-                pylab.xlabel('$x_{1}$')
-                pylab.ylabel('$x_{2}$')
-                pylab.show()
+            hist = SCALE * np.array(hist)
+            pylab.figure()
+            pylab.contour(X_1, X_2, Z)
+            pylab.plot(hist[:, 0], hist[:, 1], 'o',color='r', zorder = 1)
+            pylab.title('Visited Points (All Temperatures)')
+            pylab.xlabel('$x_{1}$')
+            pylab.ylabel('$x_{2}$')
+            pylab.show()
         pylab.figure()
         pylab.plot(np.array(f_hist), '-')
         pylab.title('Objective Function f(x) with # Accepted Iterations')
@@ -275,6 +274,7 @@ def run(should_plot = False):
 
 if __name__ == "__main__":
     TOT_EVALS = 100
+    _, _ = run()
     # avg, std_dev = [], []
     # l_k_test = np.linspace(10, 1100, 20)
     # for i in l_k_test:
@@ -306,20 +306,20 @@ if __name__ == "__main__":
     # f_hist, _ = run()
     # pickle.dump(file = open('./SA_scale_f_hist.pickle', 'wb'), obj = f_hist)
     ###################
-    ADAPTIVE = False
-    avg, std_dev = [], []
-    a_grad = np.linspace(0, 1, 20)
-    for i in a_grad:
-        ALPHA = i
-        f_hist, _ = run()
-        avg.append(np.mean(f_hist))
-        std_dev.append(np.std(f_hist))
-    pylab.figure()
-    pylab.errorbar(a_grad, np.array(avg) ,yerr = np.array(std_dev), c = 'r', fmt = "o")
-    pylab.title('Average Minimum f(x) with ECS and varying alpha')
-    pylab.xlabel('Alpha')
-    pylab.ylabel('Average f(x)')
-    pylab.show()
+    # ADAPTIVE = False
+    # avg, std_dev = [], []
+    # a_grad = np.linspace(0, 1, 20)
+    # for i in a_grad:
+    #     ALPHA = i
+    #     f_hist, _ = run()
+    #     avg.append(np.mean(f_hist))
+    #     std_dev.append(np.std(f_hist))
+    # pylab.figure()
+    # pylab.errorbar(a_grad, np.array(avg) ,yerr = np.array(std_dev), c = 'r', fmt = "o")
+    # pylab.title('Average Minimum f(x) with ECS and varying alpha')
+    # pylab.xlabel('Alpha')
+    # pylab.ylabel('Average f(x)')
+    # pylab.show()
     ###################
     # ADAPTIVE = False
     # f_hist, x_hist = run()

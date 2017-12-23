@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  23 DEC 2017 19:18
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  23 DEC 2017 22:51
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -432,68 +432,108 @@ File: a_f_plot.png Graphic file (type png)
 Package pdftex.def Info: a_f_plot.png used on input line 88.
 (pdftex.def)             Requested size: 469.75502pt x 352.33655pt.
  [4 <./a_hist_bin.png> <./a_hist_plot.png> <./a_search_typical.png>] [5 <./a_f_plot.png>]
-Overfull \hbox (2.36252pt too wide) in paragraph at lines 102--103
+Overfull \hbox (2.36252pt too wide) in paragraph at lines 101--102
 []\OT1/cmr/m/n/12 I eval-u-ated the ef-fec-tive-ness of vary-ing hyper-parameters/implementations
  []
 
-[6]
-Overfull \hbox (0.17912pt too wide) in paragraph at lines 110--111
+<a_f_plot_5d.png, id=45, 462.528pt x 346.896pt>
+File: a_f_plot_5d.png Graphic file (type png)
+ <use a_f_plot_5d.png>
+Package pdftex.def Info: a_f_plot_5d.png used on input line 108.
+(pdftex.def)             Requested size: 284.52756pt x 213.40593pt.
+ [6 <./a_f_plot_5d.png>]
+Overfull \hbox (0.17912pt too wide) in paragraph at lines 116--117
 \OT1/cmr/m/n/12 Ex-po-nen-tial Cool-ing Schemes were com-pared (us-ing the hyper-parameters
  []
 
-<a_cooling_hist.png, id=48, 462.528pt x 346.896pt>
+<a_cooling_hist.png, id=50, 462.528pt x 346.896pt>
 File: a_cooling_hist.png Graphic file (type png)
  <use a_cooling_hist.png>
-Package pdftex.def Info: a_cooling_hist.png used on input line 117.
+Package pdftex.def Info: a_cooling_hist.png used on input line 123.
 (pdftex.def)             Requested size: 312.9803pt x 234.74811pt.
- [7 <./a_cooling_hist.png>] <a_alpha_vary.png, id=54, 462.528pt x 346.896pt>
+ [7 <./a_cooling_hist.png>] <a_alpha_vary.png, id=56, 462.528pt x 346.896pt>
 File: a_alpha_vary.png Graphic file (type png)
  <use a_alpha_vary.png>
-Package pdftex.def Info: a_alpha_vary.png used on input line 132.
+Package pdftex.def Info: a_alpha_vary.png used on input line 138.
 (pdftex.def)             Requested size: 284.52756pt x 213.40593pt.
- [8 <./a_alpha_vary.png>] <a_control_vars.png, id=59, 462.528pt x 346.896pt>
+ [8 <./a_alpha_vary.png>] <a_control_vars.png, id=61, 462.528pt x 346.896pt>
 File: a_control_vars.png Graphic file (type png)
  <use a_control_vars.png>
-Package pdftex.def Info: a_control_vars.png used on input line 147.
+Package pdftex.def Info: a_control_vars.png used on input line 153.
 (pdftex.def)             Requested size: 284.52756pt x 213.40593pt.
- [9 <./a_control_vars.png>] <a_C_vary.png, id=64, 462.528pt x 346.896pt>
+ [9 <./a_control_vars.png>] <a_C_vary.png, id=66, 462.528pt x 346.896pt>
 File: a_C_vary.png Graphic file (type png)
  <use a_C_vary.png>
-Package pdftex.def Info: a_C_vary.png used on input line 164.
+Package pdftex.def Info: a_C_vary.png used on input line 170.
 (pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
- <a_D_vary.png, id=65, 462.528pt x 346.896pt>
+ <a_D_vary.png, id=67, 462.528pt x 346.896pt>
 File: a_D_vary.png Graphic file (type png)
  <use a_D_vary.png>
-Package pdftex.def Info: a_D_vary.png used on input line 169.
+Package pdftex.def Info: a_D_vary.png used on input line 175.
 (pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
 
-Overfull \hbox (42.39458pt too wide) in paragraph at lines 162--172
+Overfull \hbox (42.39458pt too wide) in paragraph at lines 168--178
  []$[]$$[]$ 
  []
 
-[10 <./a_C_vary.png> <./a_D_vary.png>] <a_l_k.png, id=71, 462.528pt x 346.896pt>
+[10 <./a_C_vary.png> <./a_D_vary.png>] <a_l_k.png, id=73, 462.528pt x 346.896pt>
 File: a_l_k.png Graphic file (type png)
  <use a_l_k.png>
-Package pdftex.def Info: a_l_k.png used on input line 185.
+Package pdftex.def Info: a_l_k.png used on input line 191.
 (pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
- [11 <./a_l_k.png>] [12] [13] [14] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
+ [11 <./a_l_k.png>] [12] [13] <b_G_0.png, id=85, 462.528pt x 346.896pt>
+File: b_G_0.png Graphic file (type png)
+ <use b_G_0.png>
+Package pdftex.def Info: b_G_0.png used on input line 230.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <b_G_5.png, id=86, 462.528pt x 346.896pt>
+File: b_G_5.png Graphic file (type png)
+ <use b_G_5.png>
+Package pdftex.def Info: b_G_5.png used on input line 234.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <b_G_10.png, id=87, 462.528pt x 346.896pt>
+File: b_G_10.png Graphic file (type png)
+ <use b_G_10.png>
+Package pdftex.def Info: b_G_10.png used on input line 238.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <b_G_26.png, id=88, 462.528pt x 346.896pt>
+File: b_G_26.png Graphic file (type png)
+ <use b_G_26.png>
+Package pdftex.def Info: b_G_26.png used on input line 242.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <B_G_all.png, id=89, 462.528pt x 346.896pt>
+File: B_G_all.png Graphic file (type png)
+ <use B_G_all.png>
+Package pdftex.def Info: B_G_all.png used on input line 250.
+(pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
+ [14] <b_g_vary.png, id=93, 462.528pt x 346.896pt>
+File: b_g_vary.png Graphic file (type png)
+ <use b_g_vary.png>
+Package pdftex.def Info: b_g_vary.png used on input line 255.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ [15 <./b_G_0.png> <./b_G_5.png> <./b_G_10.png> <./b_G_26.png> <./B_G_all.png>]
+Overfull \hbox (14.23466pt too wide) in paragraph at lines 262--263
+[]\OT1/cmr/m/n/12 As with Sim-u-lated An-neal-ing, I will eval-u-ate chang-ing sev-eral hyper-parameters/
+ []
+
+[16 <./b_g_vary.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 7934 strings out of 493014
- 121992 string characters out of 6133351
- 222366 words of memory out of 5000000
- 11336 multiletter control sequences out of 15000+600000
+ 7973 strings out of 493014
+ 122534 string characters out of 6133351
+ 222405 words of memory out of 5000000
+ 11368 multiletter control sequences out of 15000+600000
  17119 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  48i,8n,52p,626b,4024s stack positions out of 5000i,500n,10000p,200000b,80000s
 </usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (14 pages, 2686193 bytes).
+Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (16 pages, 4532504 bytes).
 PDF statistics:
- 119 PDF objects out of 1000 (max. 8388607)
- 64 compressed objects within 1 object stream
+ 139 PDF objects out of 1000 (max. 8388607)
+ 68 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 71 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 106 words of extra memory for PDF output out of 10000 (max. 10000000)
 

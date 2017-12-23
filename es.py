@@ -20,6 +20,10 @@ EPSILON_RELATIVE = 0.001 # Relative difference end criterion parameter
 HIST_WIDTH = 0.35 # Histogram width
 TOT_EVALS = 200 # Number of runs for results
 METHOD = 'Evolutionary Strategies' # Name of current method
+GEN_WALK_ID = [0, 5, 10, -1] # Desired Generations to be printed
+M_L = 5 # Capped number of regions for histogram
+DELTA = 2.5 # For plotting - width of each f(x) calculation
+SHOW = True # Show plot
 
 def f(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -209,9 +213,11 @@ def evaluate(should_plot = False):
     hist = []
     de = np.inf
     re = np.inf
+    off_hist = []
+    f_hist = []
     while (env < OBJ_LIM):
         # SELECTION: Accept only top MU items
-        parents = sorted(parents, key=lambda x: x[-1])[:MU_CNT] 
+        parents = sorted(parents, key=lambda x: x[-1])[:MU_CNT]
         if parents[0][-1] < f_star:
             f_star = parents[0][-1]
             x_star = parents[1][0]
@@ -219,7 +225,11 @@ def evaluate(should_plot = False):
         re = EPSILON_RELATIVE/MU_CNT * np.abs(np.sum([i[-1] for i in parents]))
         if de < EPSILON or de < re:
             break
-        hist = hist + [i[0].tolist() for i in parents]
+        cur = [i[0].tolist() for i in parents]
+        f_cur = [i[-1] for i in parents]
+        f_hist.append((np.mean(f_cur), f_cur[0]))
+        hist = hist + cur
+        off_hist.append(cur)
         control_arr = np.array([i[0] for i in parents])
         sigma_arr = np.array([i[1][0] for i in parents])
         rot_arr = np.array([i[1][1] for i in parents])
@@ -237,12 +247,47 @@ def evaluate(should_plot = False):
         parents = offspring[:]
     if not (de < EPSILON or de < re):
         pass
-        print('Terminated due to max # objective function evals')
+        # print('Terminated due to max # objective function evals')
     if should_plot:
-        print(f_star, x_star)
-        hist = np.array(hist)
+        # Plotting code
+        print('NOTE: ', f_star, x_star, 'Eval:', env)
+        if DIM == 2 and False:
+            x_one_mesh = np.arange(-513, 513, DELTA)
+            x_two_mesh = np.arange(-513, 513, DELTA)
+            X_1, X_2 = np.meshgrid(x_one_mesh, x_two_mesh)
+            Z = np.zeros(np.shape(X_1))
+            for i in range(len(x_one_mesh)):
+                for j in range(len(x_two_mesh)):
+                    Z[i, j] = f([x_two_mesh[j], x_one_mesh[i]])
+            for idx in GEN_WALK_ID:
+                x_coords = np.array(off_hist[idx])
+                if idx < 0: 
+                    cur_id = len(off_hist) + idx
+                else:
+                    cur_id = idx
+                pylab.figure()
+                pylab.contour(X_1, X_2, Z)
+                pylab.plot(x_coords[:, 0], x_coords[:, 1], 'o',color='r', zorder = 1)
+                pylab.title('Selection in Generation: ' + str(cur_id))
+                pylab.xlabel('$x_{1}$')
+                pylab.ylabel('$x_{2}$')
+                pylab.show()
+            hist = np.array(hist)
+            pylab.figure()
+            pylab.contour(X_1, X_2, Z)
+            pylab.plot(hist[:, 0], hist[:, 1], 'o',color='r', zorder = 1)
+            pylab.title('Visited Points (All Generations)')
+            pylab.xlabel('$x_{1}$')
+            pylab.ylabel('$x_{2}$')
+            pylab.show()
+        f_hist = np.array(f_hist)
         pylab.figure()
-        pylab.plot(hist[:, 0], hist[:, 1], 'o')
+        pylab.plot(np.array(f_hist[:, 0]), '-')
+        pylab.plot(np.array(f_hist[:, 1]), '-.')
+        pylab.title('Variation of Average + Minimum Objective Function f(x) over generations')
+        pylab.xlabel('Generation')
+        pylab.ylabel('Objective Function value f(x)')
+        pylab.legend(['Average', 'Minimum'])
         pylab.show()
     return f_star, x_star
 
@@ -251,39 +296,68 @@ def round_to_multiple(x, bucket = 10):
         x[i] = int(bucket * round(float(x[i])/bucket))
     return tuple(x.tolist())
 
-if __name__ == "__main__":
+def run(should_plot = False):
+    global TOT_EVALS, SHOW
     f_hist = []
     x_hist = []
     histogram = {}
-    HIST_WIDTH = 0.35
-    TOT_EVALS = 10
-    METHOD = 'Evolutionary Strategies'
+    print("")
     while (len(f_hist) < TOT_EVALS):
-        f_cur, x_cur = evaluate(False)
+        f_cur, x_cur = evaluate(SHOW)
+        if SHOW: TOT_EVALS = 1
         f_hist.append(f_cur)
-        x_hist.append(x_cur)
+        x_hist.append(x_cur.copy())
         x_b = round_to_multiple(x_cur)
         if x_b in histogram:
             histogram[x_b].append(f_cur)
         else:
             histogram[x_b] = [f_cur]
-        print('Current run: ', len(f_hist), 'Value: ', f_cur)
-    histogram_list = list(histogram.items())
-    histogram_list.sort(key = lambda t: t[1], reverse= False)
-    histo_x = [str(x[0]) + '\n E[f(x)]:' + str(np.around(np.mean(x[1]), 1)) for x in histogram_list]
-    histo_y = [len(y[1])/TOT_EVALS for y in histogram_list]
-    x_hist = np.array(x_hist)
-    pylab.figure()
-    pylab.bar(np.arange(len(histo_x)), histo_y, HIST_WIDTH, color = 'r')
-    pylab.title(METHOD + ' Minima Regions')
-    pylab.xticks(np.arange(len(histo_x)), histo_x)
-    pylab.xlabel('Minima Regions (with mean f(x))')
-    pylab.ylabel('Proportion of runs within region')
-    pylab.tight_layout()
-    pylab.show()
-    pylab.figure()
-    pylab.plot(x_hist[:, 0], x_hist[:, 1], 'o')
-    pylab.title(METHOD + ' Evaluations')
-    pylab.xlabel('$x_{1}$')
-    pylab.ylabel('$x_{2}$')
-    pylab.show()
+        print(' Current run: ' + str(len(f_hist)) + ' Value: ' + str(f_cur), end='\r')
+    print("\n*********************")
+    print("Lowest Minimum Found at: " + str(x_hist[np.argmin(f_hist)]) + " Value: " + str(np.min(f_hist)))
+    print("Average Minimum Value: " + str(np.mean(f_hist)) + " Standard Deviation: " + str(np.std(f_hist)))
+    print("*********************")
+    if not SHOW or not should_plot:
+        x_one_mesh = np.arange(-513, 513, DELTA)
+        x_two_mesh = np.arange(-513, 513, DELTA)
+        X_1, X_2 = np.meshgrid(x_one_mesh, x_two_mesh)
+        Z = np.zeros(np.shape(X_1))
+        for i in range(len(x_one_mesh)):
+            for j in range(len(x_two_mesh)):
+                Z[i, j] = f([x_two_mesh[j], x_one_mesh[i]])
+        histogram_list = list(histogram.items())
+        histogram_list = list(zip([x[0] for x in histogram_list], [x[1] for x in histogram_list], [len(x[1]) for x in histogram_list]))
+        histogram_list.sort(key = lambda t: t[2], reverse= True)
+        histo_x = [str(x[0]) + '\n f(x):' + str(np.around(np.mean(x[1]), 1)) for x in histogram_list]
+        histo_x_cord = np.array([x[0] for x in histogram_list])[:M_L]
+        histo_y = [len(y[1])/TOT_EVALS for y in histogram_list]
+        histo_x = histo_x[:M_L]
+        histo_y = histo_y[:M_L]
+        x_hist = np.array(x_hist)
+        f_hist = np.array(f_hist)
+        if (DIM == 2):
+            pylab.figure()
+            pylab.bar(np.arange(len(histo_x)), histo_y, HIST_WIDTH, color = 'r')
+            pylab.title(METHOD + ' Minima Regions')
+            pylab.xticks(np.arange(len(histo_x)), histo_x)
+            pylab.xlabel('Minima Regions (with mean f(x))')
+            pylab.ylabel('Proportion of runs within region')
+            pylab.tight_layout()
+            pylab.show()
+            pylab.figure()
+            pylab.contour(X_1, X_2, Z, cmap=pylab.cm.bone)
+            marker_size = [10*2**(10*i) for i in histo_y]
+            pylab.scatter(histo_x_cord[:, 0], histo_x_cord[:, 1], c='r', s = marker_size, edgecolor='black', zorder = 2)
+            # pylab.plot(x_hist[:, 0], x_hist[:, 1], 'o')
+            pylab.title(METHOD + ' Evaluations')
+            pylab.xlabel('$x_{1}$')
+            pylab.ylabel('$x_{2}$')
+            pylab.show()
+    combined = zip(f_hist.tolist(), x_hist.tolist())
+    f_hist = [f for f, _ in sorted(combined)][:25]
+    x_hist = [x for _, x in sorted(combined)][:25]
+    return f_hist, x_hist
+
+if __name__ == "__main__":
+    TOT_EVALS = 25
+    f_hist, _ = run()
