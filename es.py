@@ -3,19 +3,23 @@ import math
 import random
 import pylab
 
-DIM = 2
+DIM = 5
 LIM = 512
 OBJ_LIM = 10000
-SIGMA_INIT_MAG = 100
-TAU = 1/np.sqrt(2*np.sqrt(DIM))
-TAU_PRIME = 1/np.sqrt(2*DIM)
-BETA = 0.0873
-L_CNT = 140
-MU_CNT = 20
-BURN_IN = 150
-MU_PLUS_L = True
-OMEGA = 0.5
-EPSILON = 0.001
+SIGMA_INIT_MAG = 100 # Initial magnitude of standard deviation
+TAU = 1/np.sqrt(2*np.sqrt(DIM)) # As proposed by Schwefel (1995)
+TAU_PRIME = 1/np.sqrt(2*DIM) # As proposed by Schwefel (1995)
+BETA = 0.0873 # As proposed by Schwefel (1995)
+L_CNT = 140 # The number of offspring to generate at each recombination
+MU_CNT = 20 # The number of parents to select from cohort
+BURN_IN = 150 # The burn in period to randomly sample points in search space
+MU_PLUS_L = True # Whether to use (mu, l) or (mu + l)
+OMEGA = 0.5 # Omega value specified for intermediate recombination
+EPSILON = 0.001 # Absolute difference end critierion parameter
+EPSILON_RELATIVE = 0.001 # Relative difference end criterion parameter
+HIST_WIDTH = 0.35 # Histogram width
+TOT_EVALS = 200 # Number of runs for results
+METHOD = 'Evolutionary Strategies' # Name of current method
 
 def f(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -148,7 +152,6 @@ def recombine(vals, is_global = True, is_intermediate = False):
     if len(np.shape(vals[0])) == 1:
         vals = vals[:, np.newaxis, :]
     SHAPE = np.shape(vals[0])
-    OMEGA = 0.5
     ret_val = None
     if not is_intermediate and is_global:
         temp = np.zeros(SHAPE)
@@ -205,6 +208,7 @@ def evaluate(should_plot = False):
     env = BURN_IN
     hist = []
     de = np.inf
+    re = np.inf
     while (env < OBJ_LIM):
         # SELECTION: Accept only top MU items
         parents = sorted(parents, key=lambda x: x[-1])[:MU_CNT] 
@@ -212,7 +216,8 @@ def evaluate(should_plot = False):
             f_star = parents[0][-1]
             x_star = parents[1][0]
         de = np.abs(parents[-1][-1] - parents[0][-1])
-        if de < EPSILON:
+        re = EPSILON_RELATIVE/MU_CNT * np.abs(np.sum([i[-1] for i in parents]))
+        if de < EPSILON or de < re:
             break
         hist = hist + [i[0].tolist() for i in parents]
         control_arr = np.array([i[0] for i in parents])
@@ -230,7 +235,8 @@ def evaluate(should_plot = False):
         if MU_PLUS_L:
             offspring = parents + offspring
         parents = offspring[:]
-    if not de < EPSILON:
+    if not (de < EPSILON or de < re):
+        pass
         print('Terminated due to max # objective function evals')
     if should_plot:
         print(f_star, x_star)
