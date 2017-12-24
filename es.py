@@ -367,23 +367,23 @@ def run(should_plot = False):
     return f_hist, x_hist
 
 if __name__ == "__main__":
-    TOT_EVALS = 75
-    IS_GLOBAL = True
-    for i in range(4):
-        IS_CONTROL_INT = False
-        f_hist, x_hist = run()
-        IS_CONTROL_INT = True
-        f_hist_a, x_hist_a = run()
-        c_chk = np.hstack((f_hist_a, f_hist))
-        bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
-        pylab.figure()
-        pylab.hist(f_hist, bins, alpha=0.5)
-        pylab.hist(f_hist_a, bins, alpha=0.5)
-        pylab.title('Per-run minimum f(x) of Discrete vs. Intermediate Control Recombination')
-        pylab.xlabel('f(x)')
-        pylab.ylabel('Frequency')
-        pylab.legend(['Discrete', 'Intermediate'])
-        pylab.show()
+    #################
+    # IS_GLOBAL = True
+    # for i in range(4):
+    #     IS_CONTROL_INT = False
+    #     f_hist, x_hist = run()
+    #     IS_CONTROL_INT = True
+    #     f_hist_a, x_hist_a = run()
+    #     c_chk = np.hstack((f_hist_a, f_hist))
+    #     bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    #     pylab.figure()
+    #     pylab.hist(f_hist, bins, alpha=0.5)
+    #     pylab.hist(f_hist_a, bins, alpha=0.5)
+    #     pylab.title('Minimum f(x) of Discrete vs. Intermediate Control Recombination')
+    #     pylab.xlabel('f(x)')
+    #     pylab.ylabel('Frequency')
+    #     pylab.legend(['Discrete', 'Intermediate'])
+    #     pylab.show()
     #################
     # IS_GLOBAL = False
     # f_hist, x_hist = run()
@@ -508,3 +508,21 @@ if __name__ == "__main__":
     # pylab.xlabel('Magnitude of initial sigma elements')
     # pylab.ylabel('Average Minimum f(x)')
     # pylab.show()
+    #################
+    # TOT_EVALS = 75
+    # IS_GLOBAL = True
+    # for i in range(4):
+    #     IS_STRATEGY_INT = False
+    #     f_hist, x_hist = run()
+    #     IS_STRATEGY_INT = True
+    #     f_hist_a, x_hist_a = run()
+    #     c_chk = np.hstack((f_hist_a, f_hist))
+    #     bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    #     pylab.figure()
+    #     pylab.hist(f_hist, bins, alpha=0.5)
+    #     pylab.hist(f_hist_a, bins, alpha=0.5)
+    #     pylab.title('Minimum f(x) of Discrete vs. Intermediate Strategy Recombination')
+    #     pylab.xlabel('f(x)')
+    #     pylab.ylabel('Frequency')
+    #     pylab.legend(['Discrete', 'Intermediate'])
+    #     pylab.show()
