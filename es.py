@@ -368,6 +368,7 @@ def run(should_plot = False):
 
 if __name__ == "__main__":
     TOT_EVALS = 75
+    IS_GLOBAL = True
     for i in range(4):
         IS_CONTROL_INT = False
         f_hist, x_hist = run()
