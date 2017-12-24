@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  24 DEC 2017 18:55
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  24 DEC 2017 20:24
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -480,8 +480,8 @@ Overfull \hbox (42.39458pt too wide) in paragraph at lines 168--178
 File: a_l_k.png Graphic file (type png)
  <use a_l_k.png>
 Package pdftex.def Info: a_l_k.png used on input line 192.
-(pdftex.def)             Requested size: 312.9803pt x 234.74811pt.
- [11] [12 <./a_l_k.png>] [13] <b_G_0.png, id=85, 462.528pt x 346.896pt>
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+ [11 <./a_l_k.png>] [12] [13] <b_G_0.png, id=85, 462.528pt x 346.896pt>
 File: b_G_0.png Graphic file (type png)
  <use b_G_0.png>
 Package pdftex.def Info: b_G_0.png used on input line 231.
@@ -571,29 +571,44 @@ File: b_l_g_3.png Graphic file (type png)
  <use b_l_g_3.png>
 Package pdftex.def Info: b_l_g_3.png used on input line 350.
 (pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+ <b_l_g_2.png, id=128, 462.528pt x 346.896pt>
+File: b_l_g_2.png Graphic file (type png)
+ <use b_l_g_2.png>
+Package pdftex.def Info: b_l_g_2.png used on input line 355.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+ <b_l_g_4.png, id=129, 462.528pt x 346.896pt>
+File: b_l_g_4.png Graphic file (type png)
+ <use b_l_g_4.png>
+Package pdftex.def Info: b_l_g_4.png used on input line 360.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
 
-Overfull \hbox (42.39458pt too wide) in paragraph at lines 343--353
+Overfull \hbox (42.39458pt too wide) in paragraph at lines 343--363
  []$[]$$[]$ 
  []
 
-[20 <./b_mu_iteration.png> <./b_mu_lambda_ratio.png>] [21 <./b_l_g_1.png> <./b_l_g_3.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
+
+Overfull \hbox (42.39458pt too wide) in paragraph at lines 343--363
+ []$$[]$ 
+ []
+
+[20 <./b_mu_iteration.png> <./b_mu_lambda_ratio.png>] [21 <./b_l_g_1.png> <./b_l_g_3.png> <./b_l_g_2.png> <./b_l_g_4.png>] [22] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 8026 strings out of 493014
- 123439 string characters out of 6133351
+ 8036 strings out of 493014
+ 123587 string characters out of 6133351
  222455 words of memory out of 5000000
- 11413 multiletter control sequences out of 15000+600000
+ 11421 multiletter control sequences out of 15000+600000
  19288 words of font info for 72 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  48i,8n,52p,632b,4082s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (21 pages, 4972712 bytes).
+</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb>
+Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (22 pages, 5061007 bytes).
 PDF statistics:
- 175 PDF objects out of 1000 (max. 8388607)
- 82 compressed objects within 1 object stream
+ 186 PDF objects out of 1000 (max. 8388607)
+ 87 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 146 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 156 words of extra memory for PDF output out of 10000 (max. 10000000)
 

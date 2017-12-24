@@ -101,7 +101,10 @@ def get_combination(controls, sigmas, rotations):
         sigma = recombine_ids(sigmas, np.unique(c_out), is_global = False, is_intermediate = IS_STRATEGY_INT)
         rotation = recombine_ids(rotations, c_out, is_global = False, is_intermediate = IS_STRATEGY_INT)
 
-    c_out = recombine_ids(controls, c_out, is_global = is_global, is_intermediate = IS_CONTROL_INT)
+    if IS_CONTROL_INT and is_global:
+        c_out = recombine(controls, True, True)
+    else:  
+        c_out = recombine_ids(controls, c_out, is_global = is_global, is_intermediate = IS_CONTROL_INT)
     return np.squeeze(c_out), np.squeeze(sigma), rotation
     
 def recombine_ids(vals, ids, is_global = True, is_intermediate = False):
@@ -379,7 +382,7 @@ if __name__ == "__main__":
         pylab.figure()
         pylab.hist(f_hist, bins, alpha=0.5)
         pylab.hist(f_hist_a, bins, alpha=0.5)
-        pylab.title('Per-run minimum f(x) of Discrete vs. Intermediate Control Recombination')
+        pylab.title('Minimum f(x) of Discrete vs. Intermediate Control Recombination')
         pylab.xlabel('f(x)')
         pylab.ylabel('Frequency')
         pylab.legend(['Discrete', 'Intermediate'])
