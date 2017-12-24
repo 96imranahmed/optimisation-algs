@@ -26,7 +26,9 @@ GEN_WALK_ID = [0, 5, 10, -1] # Desired Generations to be printed
 M_L = 5 # Capped number of regions for histogram
 DELTA = 2.5 # For plotting - width of each f(x) calculation
 SHOW = False # Show plot
-IS_GLOBAL = False 
+IS_GLOBAL = False
+IS_CONTROL_INT = False
+IS_STRATEGY_INT = True
 
 def f(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -67,7 +69,7 @@ def get_cov(a_matrix, sigma):
     return c_matrix
 
 def get_combination(controls, sigmas, rotations):
-    global IS_GLOBAL
+    global IS_GLOBAL, IS_CONTROL_INT, IS_STRATEGY_INT
     is_global = IS_GLOBAL
     if len(controls) < 1:
         raise ValueError('Not enough values to recombine!')
@@ -93,13 +95,13 @@ def get_combination(controls, sigmas, rotations):
     
     # Process Strategy Parameters
     if is_global:
-        sigma = recombine(sigmas, is_global = True, is_intermediate = True)
-        rotation = recombine(rotations, is_global = True, is_intermediate = True)
+        sigma = recombine(sigmas, is_global = True, is_intermediate = IS_STRATEGY_INT)
+        rotation = recombine(rotations, is_global = True, is_intermediate = IS_STRATEGY_INT)
     else:
-        sigma = recombine_ids(sigmas, np.unique(c_out), is_global = False, is_intermediate = True)
-        rotation = recombine_ids(rotations, c_out, is_global = False, is_intermediate = True)
+        sigma = recombine_ids(sigmas, np.unique(c_out), is_global = False, is_intermediate = IS_STRATEGY_INT)
+        rotation = recombine_ids(rotations, c_out, is_global = False, is_intermediate = IS_STRATEGY_INT)
 
-    c_out = recombine_ids(controls, c_out, is_global = is_global, is_intermediate = False)
+    c_out = recombine_ids(controls, c_out, is_global = is_global, is_intermediate = IS_CONTROL_INT)
     return np.squeeze(c_out), np.squeeze(sigma), rotation
     
 def recombine_ids(vals, ids, is_global = True, is_intermediate = False):
@@ -366,20 +368,62 @@ def run(should_plot = False):
 
 if __name__ == "__main__":
     TOT_EVALS = 75
-    IS_GLOBAL = False
-    f_hist, x_hist = run()
-    IS_GLOBAL = True
-    f_hist_a, x_hist_a = run()
-    c_chk = np.hstack((f_hist_a, f_hist))
-    bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
-    pylab.figure()
-    pylab.hist(f_hist, bins, alpha=0.5)
-    pylab.hist(f_hist_a, bins, alpha=0.5)
-    pylab.title('Histogram of per-run minimum f(x) of Local vs. Global recombination')
-    pylab.xlabel('f(x)')
-    pylab.ylabel('Frequency')
-    pylab.legend(['Local', 'Global'])
-    pylab.show()
+    for i in range(4):
+        IS_CONTROL_INT = False
+        f_hist, x_hist = run()
+        IS_CONTROL_INT = True
+        f_hist_a, x_hist_a = run()
+        c_chk = np.hstack((f_hist_a, f_hist))
+        bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+        pylab.figure()
+        pylab.hist(f_hist, bins, alpha=0.5)
+        pylab.hist(f_hist_a, bins, alpha=0.5)
+        pylab.title('Per-run minimum f(x) of Discrete vs. Intermediate Control Recombination')
+        pylab.xlabel('f(x)')
+        pylab.ylabel('Frequency')
+        pylab.legend(['Discrete', 'Intermediate'])
+        pylab.show()
+    #################
+    # IS_GLOBAL = False
+    # f_hist, x_hist = run()
+    # IS_GLOBAL = True
+    # f_hist_a, x_hist_a = run()
+    # c_chk = np.hstack((f_hist_a, f_hist))
+    # bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    # pylab.figure()
+    # pylab.hist(f_hist, bins, alpha=0.5)
+    # pylab.hist(f_hist_a, bins, alpha=0.5)
+    # pylab.title('Histogram of per-run minimum f(x) of Local vs. Global recombination')
+    # pylab.xlabel('f(x)')
+    # pylab.ylabel('Frequency')
+    # pylab.legend(['Local', 'Global'])
+    # pylab.show()
+    # f_hist, x_hist = run()
+    # IS_GLOBAL = True
+    # f_hist_a, x_hist_a = run()
+    # c_chk = np.hstack((f_hist_a, f_hist))
+    # bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    # pylab.figure()
+    # pylab.hist(f_hist, bins, alpha=0.5)
+    # pylab.hist(f_hist_a, bins, alpha=0.5)
+    # pylab.title('Histogram of per-run minimum f(x) of Local vs. Global recombination')
+    # pylab.xlabel('f(x)')
+    # pylab.ylabel('Frequency')
+    # pylab.legend(['Local', 'Global'])
+    # pylab.show()
+    # f_hist, x_hist = run()
+    # IS_GLOBAL = True
+    # f_hist_a, x_hist_a = run()
+    # c_chk = np.hstack((f_hist_a, f_hist))
+    # bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    # pylab.figure()
+    # pylab.hist(f_hist, bins, alpha=0.5)
+    # pylab.hist(f_hist_a, bins, alpha=0.5)
+    # pylab.title('Histogram of per-run minimum f(x) of Local vs. Global recombination')
+    # pylab.xlabel('f(x)')
+    # pylab.ylabel('Frequency')
+    # pylab.legend(['Local', 'Global'])
+    # pylab.show()
     #################
     # avg, std_dev = [], []
     # times = []
