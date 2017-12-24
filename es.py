@@ -26,7 +26,7 @@ GEN_WALK_ID = [0, 5, 10, -1] # Desired Generations to be printed
 M_L = 5 # Capped number of regions for histogram
 DELTA = 2.5 # For plotting - width of each f(x) calculation
 SHOW = False # Show plot
-IS_GLOBAL = False
+IS_GLOBAL = True
 IS_CONTROL_INT = False
 IS_STRATEGY_INT = True
 
