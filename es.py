@@ -2,6 +2,8 @@ import numpy as np
 import math
 import random
 import pylab
+import time
+import matplotlib.pyplot as plt
 
 DIM = 5
 LIM = 512
@@ -10,7 +12,7 @@ SIGMA_INIT_MAG = 50 # Initial magnitude of standard deviation
 TAU = 1/np.sqrt(2*np.sqrt(DIM)) # As proposed by Schwefel (1995)
 TAU_PRIME = 1/np.sqrt(2*DIM) # As proposed by Schwefel (1995)
 BETA = 0.0873 # As proposed by Schwefel (1995)
-L_CNT = 140 # The number of offspring to generate at each recombination
+L_CNT = 200 # The number of offspring to generate at each recombination
 MU_CNT = 20 # The number of parents to select from cohort
 BURN_IN = 150 # The burn in period to randomly sample points in search space
 MU_PLUS_L = True # Whether to use (mu, l) or (mu + l)
@@ -24,6 +26,7 @@ GEN_WALK_ID = [0, 5, 10, -1] # Desired Generations to be printed
 M_L = 5 # Capped number of regions for histogram
 DELTA = 2.5 # For plotting - width of each f(x) calculation
 SHOW = False # Show plot
+IS_GLOBAL = False 
 
 def f(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -63,7 +66,9 @@ def get_cov(a_matrix, sigma):
                 c_matrix[i, j] = 0.5*(sigma[i]**2 - sigma[j]**2)*np.tan(2*a_matrix[i,j])
     return c_matrix
 
-def get_combination(controls, sigmas, rotations, is_global = False):
+def get_combination(controls, sigmas, rotations):
+    global IS_GLOBAL
+    is_global = IS_GLOBAL
     if len(controls) < 1:
         raise ValueError('Not enough values to recombine!')
     control_shape = np.shape(controls)
@@ -195,6 +200,7 @@ def recombine(vals, is_global = True, is_intermediate = False):
     return np.array(ret_val)       
 
 def evaluate(should_plot = False):
+    global MU_CNT, L_CNT
      #Initialisations
     x_init = np.random.uniform(-1*LIM, LIM, DIM)
 
@@ -236,7 +242,7 @@ def evaluate(should_plot = False):
         # RECOMBINATION: Generate new offspring
         offspring = []
         while (len(offspring) < L_CNT):
-            control, sigma, rotation = get_combination(control_arr, sigma_arr, rot_arr, is_global = True)
+            control, sigma, rotation = get_combination(control_arr, sigma_arr, rot_arr)
             sigma, rotation = update_strategy(sigma, rotation)
             control = bound_x(update_x(control, get_cov(rotation, sigma)))
             offspring.append((control, (sigma, rotation), f(control)))
@@ -354,14 +360,81 @@ def run(should_plot = False):
             pylab.ylabel('$x_{2}$')
             pylab.show()
     combined = zip(f_hist.tolist(), x_hist.tolist())
-    f_hist = [f for f, _ in sorted(combined)][:10]
-    x_hist = [x for _, x in sorted(combined)][:10]
+    # f_hist = [f for f, _ in sorted(combined)][:10]
+    # x_hist = [x for _, x in sorted(combined)][:10]
     return f_hist, x_hist
 
 if __name__ == "__main__":
     TOT_EVALS = 75
-    ################
-    
+    IS_GLOBAL = False
+    f_hist, x_hist = run()
+    IS_GLOBAL = True
+    f_hist_a, x_hist_a = run()
+    c_chk = np.hstack((f_hist_a, f_hist))
+    bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    pylab.figure()
+    pylab.hist(f_hist, bins, alpha=0.5)
+    pylab.hist(f_hist_a, bins, alpha=0.5)
+    pylab.title('Histogram of per-run minimum f(x) of Local vs. Global recombination')
+    pylab.xlabel('f(x)')
+    pylab.ylabel('Frequency')
+    pylab.legend(['Local', 'Global'])
+    pylab.show()
+    #################
+    # avg, std_dev = [], []
+    # times = []
+    # m = np.linspace(1, 15, 15, dtype=np.int16) #Go to 2sigma
+    # for i in m:
+    #     L_CNT = i*MU_CNT
+    #     start_time = time.time()
+    #     f_hist, _ = run()
+    #     times.append(np.around(time.time() - start_time, 0))
+    #     avg.append(np.mean(f_hist))
+    #     std_dev.append(np.std(f_hist))
+    # fig, ax1 = plt.subplots()
+    # ax1.errorbar(m, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "-o", label = 'Avg. Min f(x)')
+    # ax1.set_xlabel('Ratio of $\lambda$:$\mu$')
+    # # Make the y-axis label, ticks and tick labels match the line color.
+    # ax1.set_ylabel('Average Minimum f(x)', color='r')
+    # ax1.tick_params('y', colors='r')
+    # ax2 = ax1.twinx()
+    # ax2.plot(m, np.array(times), '-.o', c = 'b', label = 'Time Taken')
+    # ax2.set_ylabel('Time (s)', color='b')
+    # ax2.tick_params('y', colors='b')
+    # ax1.set_title('Variation of average minimum objective f(x) with $\lambda:\mu$ ratio')
+    # ax1.legend(loc = 3)
+    # ax2.legend(loc = 4)
+    # fig.tight_layout()
+    # plt.show()
+    #################
+    # TOT_EVALS = 25
+    # avg, std_dev = [], []
+    # times = []
+    # m = np.linspace(10, 100, 10, dtype=np.int16) #Go to 2sigma
+    # for i in m:
+    #     MU_CNT = i
+    #     L_CNT = 7*MU_CNT
+    #     start_time = time.time()
+    #     f_hist, _ = run()
+    #     times.append(np.around(time.time() - start_time, 0))
+    #     avg.append(np.mean(f_hist))
+    #     std_dev.append(np.std(f_hist))
+    # fig, ax1 = plt.subplots()
+    # ax1.errorbar(m, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "-o", label = 'Avg. Min f(x)')
+    # ax1.set_xlabel('Number of parents per selection')
+    # # Make the y-axis label, ticks and tick labels match the line color.
+    # ax1.set_ylabel('Average Minimum f(x)', color = 'r')
+    # ax1.tick_params('y', colors='r')
+    # ax2 = ax1.twinx()
+    # ax2.plot(m, np.array(times), '-.o', c = 'b', label = 'Time Taken')
+    # ax2.set_ylabel('Time (s)', color='b')
+    # ax2.tick_params('y', colors='b')
+    # ax1.set_title('Variation of average minimum objective f(x) with # parents')
+    # ax1.legend(loc = 2)
+    # ax2.legend(loc = 4)
+    # fig.tight_layout()
+    # plt.show()
+    #################
     # MU_PLUS_L = False
     # f_hist, x_hist = run()
     # MU_PLUS_L = True

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  24 DEC 2017 02:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (TeX Live 2016) (preloaded format=pdflatex 2017.2.21)  24 DEC 2017 18:55
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -479,92 +479,121 @@ Overfull \hbox (42.39458pt too wide) in paragraph at lines 168--178
 [10 <./a_C_vary.png> <./a_D_vary.png>] <a_l_k.png, id=73, 462.528pt x 346.896pt>
 File: a_l_k.png Graphic file (type png)
  <use a_l_k.png>
-Package pdftex.def Info: a_l_k.png used on input line 191.
-(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
- [11 <./a_l_k.png>] [12] [13] <b_G_0.png, id=85, 462.528pt x 346.896pt>
+Package pdftex.def Info: a_l_k.png used on input line 192.
+(pdftex.def)             Requested size: 312.9803pt x 234.74811pt.
+ [11] [12 <./a_l_k.png>] [13] <b_G_0.png, id=85, 462.528pt x 346.896pt>
 File: b_G_0.png Graphic file (type png)
  <use b_G_0.png>
-Package pdftex.def Info: b_G_0.png used on input line 230.
+Package pdftex.def Info: b_G_0.png used on input line 231.
 (pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
  <b_G_5.png, id=86, 462.528pt x 346.896pt>
 File: b_G_5.png Graphic file (type png)
  <use b_G_5.png>
-Package pdftex.def Info: b_G_5.png used on input line 234.
+Package pdftex.def Info: b_G_5.png used on input line 235.
 (pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
  <b_G_10.png, id=87, 462.528pt x 346.896pt>
 File: b_G_10.png Graphic file (type png)
  <use b_G_10.png>
-Package pdftex.def Info: b_G_10.png used on input line 238.
+Package pdftex.def Info: b_G_10.png used on input line 239.
 (pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
  <b_G_26.png, id=88, 462.528pt x 346.896pt>
 File: b_G_26.png Graphic file (type png)
  <use b_G_26.png>
-Package pdftex.def Info: b_G_26.png used on input line 242.
+Package pdftex.def Info: b_G_26.png used on input line 243.
 (pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
  <B_G_all.png, id=89, 462.528pt x 346.896pt>
 File: B_G_all.png Graphic file (type png)
  <use B_G_all.png>
-Package pdftex.def Info: B_G_all.png used on input line 250.
+Package pdftex.def Info: B_G_all.png used on input line 251.
 (pdftex.def)             Requested size: 199.16928pt x 149.37938pt.
  [14] <b_g_vary.png, id=93, 462.528pt x 346.896pt>
 File: b_g_vary.png Graphic file (type png)
  <use b_g_vary.png>
-Package pdftex.def Info: b_g_vary.png used on input line 255.
+Package pdftex.def Info: b_g_vary.png used on input line 256.
 (pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
  [15 <./b_G_0.png> <./b_G_5.png> <./b_G_10.png> <./b_G_26.png> <./B_G_all.png>]
-Overfull \hbox (14.23466pt too wide) in paragraph at lines 262--263
+Overfull \hbox (14.23466pt too wide) in paragraph at lines 263--264
 []\OT1/cmr/m/n/12 As with Sim-u-lated An-neal-ing, I will eval-u-ate chang-ing sev-eral hyper-parameters/
  []
 
 <b_g_vary_5.png, id=102, 462.528pt x 346.896pt>
 File: b_g_vary_5.png Graphic file (type png)
  <use b_g_vary_5.png>
-Package pdftex.def Info: b_g_vary_5.png used on input line 268.
+Package pdftex.def Info: b_g_vary_5.png used on input line 269.
 (pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 265--271
+Underfull \hbox (badness 10000) in paragraph at lines 266--272
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 265--271
+Underfull \hbox (badness 10000) in paragraph at lines 266--272
 
  []
 
-[16 <./b_g_vary.png>]
-
-LaTeX Warning: Reference `fig14' on page 17 undefined on input line 280.
-
-<b_sigma.png, id=107, 462.528pt x 346.896pt>
+[16 <./b_g_vary.png>] [17 <./b_g_vary_5.png>] <b_sigma.png, id=111, 462.528pt x 346.896pt>
 File: b_sigma.png Graphic file (type png)
  <use b_sigma.png>
 Package pdftex.def Info: b_sigma.png used on input line 284.
 (pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
- [17 <./b_g_vary_5.png>] [18 <./b_sigma.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux)
+ <b_hist_all.png, id=112, 462.528pt x 346.896pt>
+File: b_hist_all.png Graphic file (type png)
+ <use b_hist_all.png>
+Package pdftex.def Info: b_hist_all.png used on input line 300.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ <b_hist_all_2.png, id=113, 462.528pt x 346.896pt>
+File: b_hist_all_2.png Graphic file (type png)
+ <use b_hist_all_2.png>
+Package pdftex.def Info: b_hist_all_2.png used on input line 305.
+(pdftex.def)             Requested size: 227.62204pt x 170.71628pt.
+ [18 <./b_sigma.png>] <b_mu_iteration.png, id=118, 462.528pt x 346.896pt>
+File: b_mu_iteration.png Graphic file (type png)
+ <use b_mu_iteration.png>
+Package pdftex.def Info: b_mu_iteration.png used on input line 324.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+ <b_mu_lambda_ratio.png, id=119, 462.528pt x 346.896pt>
+File: b_mu_lambda_ratio.png Graphic file (type png)
+ <use b_mu_lambda_ratio.png>
+Package pdftex.def Info: b_mu_lambda_ratio.png used on input line 329.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
 
-LaTeX Warning: There were undefined references.
+Overfull \hbox (42.39458pt too wide) in paragraph at lines 322--332
+ []$[]$$[]$ 
+ []
 
+[19 <./b_hist_all.png> <./b_hist_all_2.png>] <b_l_g_1.png, id=126, 462.528pt x 346.896pt>
+File: b_l_g_1.png Graphic file (type png)
+ <use b_l_g_1.png>
+Package pdftex.def Info: b_l_g_1.png used on input line 345.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
+ <b_l_g_3.png, id=127, 462.528pt x 346.896pt>
+File: b_l_g_3.png Graphic file (type png)
+ <use b_l_g_3.png>
+Package pdftex.def Info: b_l_g_3.png used on input line 350.
+(pdftex.def)             Requested size: 256.0748pt x 192.06375pt.
 
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+Overfull \hbox (42.39458pt too wide) in paragraph at lines 343--353
+ []$[]$$[]$ 
+ []
 
- )
+[20 <./b_mu_iteration.png> <./b_mu_lambda_ratio.png>] [21 <./b_l_g_1.png> <./b_l_g_3.png>] (/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.aux) )
 (\end occurred inside a group at level 1)
 
 ### simple group (level 1) entered at line 1061 ({)
 ### bottom level 
 Here is how much of TeX's memory you used:
- 7985 strings out of 493014
- 122711 string characters out of 6133351
- 222415 words of memory out of 5000000
- 11378 multiletter control sequences out of 15000+600000
- 17119 words of font info for 64 fonts, out of 8000000 for 9000
+ 8026 strings out of 493014
+ 123439 string characters out of 6133351
+ 222455 words of memory out of 5000000
+ 11413 multiletter control sequences out of 15000+600000
+ 19288 words of font info for 72 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 48i,8n,52p,626b,4024s stack positions out of 5000i,500n,10000p,200000b,80000s
-</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
-Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (18 pages, 4650267 bytes).
+ 48i,8n,52p,632b,4082s stack positions out of 5000i,500n,10000p,200000b,80000s
+</usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/local/texlive/2016/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb>
+Output written on "/Users/ImranAhmed/OneDrive/Cambridge/4th Year/4M17/cwk_2/.texpadtmp/report.pdf" (21 pages, 4972712 bytes).
 PDF statistics:
- 149 PDF objects out of 1000 (max. 8388607)
- 72 compressed objects within 1 object stream
+ 175 PDF objects out of 1000 (max. 8388607)
+ 82 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
- 116 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 146 words of extra memory for PDF output out of 10000 (max. 10000000)
 
