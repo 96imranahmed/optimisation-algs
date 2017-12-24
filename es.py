@@ -6,7 +6,7 @@ import pylab
 DIM = 5
 LIM = 512
 OBJ_LIM = 10000
-SIGMA_INIT_MAG = 100 # Initial magnitude of standard deviation
+SIGMA_INIT_MAG = 50 # Initial magnitude of standard deviation
 TAU = 1/np.sqrt(2*np.sqrt(DIM)) # As proposed by Schwefel (1995)
 TAU_PRIME = 1/np.sqrt(2*DIM) # As proposed by Schwefel (1995)
 BETA = 0.0873 # As proposed by Schwefel (1995)
@@ -23,7 +23,7 @@ METHOD = 'Evolutionary Strategies' # Name of current method
 GEN_WALK_ID = [0, 5, 10, -1] # Desired Generations to be printed
 M_L = 5 # Capped number of regions for histogram
 DELTA = 2.5 # For plotting - width of each f(x) calculation
-SHOW = True # Show plot
+SHOW = False # Show plot
 
 def f(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -354,10 +354,39 @@ def run(should_plot = False):
             pylab.ylabel('$x_{2}$')
             pylab.show()
     combined = zip(f_hist.tolist(), x_hist.tolist())
-    f_hist = [f for f, _ in sorted(combined)][:25]
-    x_hist = [x for _, x in sorted(combined)][:25]
+    f_hist = [f for f, _ in sorted(combined)][:10]
+    x_hist = [x for _, x in sorted(combined)][:10]
     return f_hist, x_hist
 
 if __name__ == "__main__":
-    TOT_EVALS = 25
-    f_hist, _ = run()
+    TOT_EVALS = 75
+    ################
+    
+    # MU_PLUS_L = False
+    # f_hist, x_hist = run()
+    # MU_PLUS_L = True
+    # f_hist_a, x_hist_a = run()
+    # c_chk = np.hstack((f_hist_a, f_hist))
+    # bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
+    # pylab.figure()
+    # pylab.hist(f_hist, bins, alpha=0.5)
+    # pylab.hist(f_hist_a, bins, alpha=0.5)
+    # pylab.title('Histogram of per-run minimum f(x) of $(\mu, \lambda)$ vs. $(\mu + \lambda)$ strategies')
+    # pylab.xlabel('f(x)')
+    # pylab.ylabel('Frequency')
+    # pylab.legend(['$(\mu, \lambda)$', '$(\mu + \lambda)$'])
+    # pylab.show()
+    #################
+    # avg, std_dev = [], []
+    # s = np.linspace(1, 512, 10) #Go to 2sigma
+    # for i in s:
+    #     SIGMA_INIT_MAG = i
+    #     f_hist, _ = run()
+    #     avg.append(np.mean(f_hist))
+    #     std_dev.append(np.std(f_hist))
+    # pylab.figure()
+    # pylab.errorbar(s, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
+    # pylab.title('Average Minimum f(x) with varying magnitude of initial sigma elements')
+    # pylab.xlabel('Magnitude of initial sigma elements')
+    # pylab.ylabel('Average Minimum f(x)')
+    # pylab.show()
