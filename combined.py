@@ -11,10 +11,13 @@ def parse(in_arr, idx_compare, idx_out, limit, is_greater = False):
     ret_vals = []
     comp_arr = [i[idx_compare] for i in in_arr]
     idx_end = 0
-    if is_greater:
-        idx_end = np.argwhere(np.array(comp_arr) > limit)
-    else:
-        idx_end = np.argwhere(np.array(comp_arr) < limit)
+    if not limit  == -1:
+        if is_greater:
+            idx_end = np.argwhere(np.array(comp_arr) > limit)
+        else:
+            idx_end = np.argwhere(np.array(comp_arr) < limit)
+    else: 
+        idx_end = [-2]
     end_id = -1
     if len(idx_end) == 0:
         return None
@@ -36,17 +39,21 @@ mean_time_sa = []
 mean_time_es = []
 mean_evals_sa = []
 mean_evals_es = []
+mean_f_sa = []
+mean_f_es = []
 i = 0
 print('Starting...')
 while i < 100:
     print(' Processing:', i, end='\r')
     f_es, x_es, stats_es = es.evaluate(False, True)
     f_sa, x_sa, stats_sa = sim_ann_scale.evaluate(False, True)
-    es_p = parse(stats_es, 3, [1, 3, 2], 99999, True) # Evaluate on 5D case
-    sa_p = parse(stats_sa, 3, [1, 3, 2], 99999, True)
+    es_p = parse(stats_es, 3, [1, 3, 2], 9999, True) # Evaluate on 5D case
+    sa_p = parse(stats_sa, 3, [1, 3, 2], 9999, True)
     # es_p = parse(stats_es, 1, [1, 3, 2], -959)
     # sa_p = parse(stats_sa, 1, [1, 3, 2], -959) For 2D Case
     if es_p and sa_p:
+        mean_f_sa.append(f_sa)
+        mean_f_es.append(f_es)
         mean_time_sa.append(sa_p[2][-1])
         mean_time_es.append(es_p[2][-1])
         mean_evals_sa.append(sa_p[1][-1])
@@ -64,3 +71,5 @@ while i < 100:
 
 print('SA Mean Time:', np.mean(mean_time_sa), 'Evals', np.mean(mean_evals_sa))
 print('ES Mean Time:', np.mean(mean_time_es), 'Evals', np.mean(mean_evals_es))
+print('SA Mean F', np.mean(mean_f_sa), 'SA Std F', np.std(mean_f_sa))
+print('ES Mean F', np.mean(mean_f_es), 'ES Std F', np.std(mean_f_es))

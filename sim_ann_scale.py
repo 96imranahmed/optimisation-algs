@@ -143,6 +143,7 @@ def evaluate(should_plot = False, ret_stats = False):
         f_x_dash = f(x_dash)
         l_cur += 1
         df = f_x_dash - f_x
+        stat_hist.append((f_x, f_star, time.time() - eval_time, env))
         if check_accept(df, T, D, u):
             acc += 1
             hist.append(x_dash)
@@ -159,7 +160,6 @@ def evaluate(should_plot = False, ret_stats = False):
                 did_find_sol = True
             else:
                 return_to_base += 1
-            stat_hist.append((f_x, f_star, time.time() - eval_time, env))
             if return_to_base > RESTART_THRESH:
                 x = x_star
                 eta_cur = 0

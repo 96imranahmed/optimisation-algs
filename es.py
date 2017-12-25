@@ -241,7 +241,6 @@ def evaluate(should_plot = False, ret_stats = False):
         cur = [i[0].tolist() for i in parents]
         f_cur = [i[-1] for i in parents]
         f_hist.append((np.mean(f_cur), f_cur[0]))
-        stat_hist.append((np.mean(f_cur), f_star, time.time() - eval_time, env))
         hist = hist + cur
         off_hist.append(cur)
         control_arr = np.array([i[0] for i in parents])
@@ -255,6 +254,7 @@ def evaluate(should_plot = False, ret_stats = False):
             control = bound_x(update_x(control, get_cov(rotation, sigma)))
             offspring.append((control, (sigma, rotation), f(control)))
         env += L_CNT
+        stat_hist.append((np.mean(f_cur), f_star, time.time() - eval_time, env))
         # MU+L out recombination
         if MU_PLUS_L:
             offspring = parents + offspring
