@@ -37,8 +37,9 @@ mean_time_es = []
 mean_evals_sa = []
 mean_evals_es = []
 i = 0
+print('Starting...')
 while i < 100:
-    print(i)
+    print(' Processing:', i, end='\r')
     f_es, x_es, stats_es = es.evaluate(False, True)
     f_sa, x_sa, stats_sa = sim_ann_scale.evaluate(False, True)
     es_p = parse(stats_es, 3, [1, 3, 2], 99999, True) # Evaluate on 5D case
