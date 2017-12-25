@@ -15,7 +15,7 @@ L_K = 200 # Length of Markov Chain
 ETA_MIN_SCALE = 0.6 # Proportional (to L_k) length of Markov Chain acceptances
 ALPHA = 0.95 # Alpha for exponential cooling
 ADAPTIVE = True # Use adaptive cooling
-SHOW = True # Show plot
+SHOW = False # Show plot
 MIN_ACCEPTANCE = 0.001 # Min solution acceptance ratio
 RESTART_THRESH = 1000 # Restart if no solutions found
 TEMP_WALK_ID = [0, 3, 6, -1] # Desired Walks to be printed
@@ -275,19 +275,19 @@ def run(should_plot = False):
 if __name__ == "__main__":
     TOT_EVALS = 100
     _, _ = run()
-    # avg, std_dev = [], []
-    # l_k_test = np.linspace(10, 1100, 20)
-    # for i in l_k_test:
-    #     L_K = i
-    #     f_hist, _ = run()
-    #     avg.append(np.mean(f_hist))
-    #     std_dev.append(np.std(f_hist))
-    # pylab.figure() 
-    # pylab.errorbar(l_k_test, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
-    # pylab.title('Average Minimum f(x) with varying Markov Chain Length $L_k$')
-    # pylab.xlabel('Markov Chain Length $L_k$ (# f(x) Evaluations)')
-    # pylab.ylabel('Average Minimum f(x)')
-    # pylab.show()
+    avg, std_dev = [], []
+    l_k_test = np.linspace(10, 1100, 20)
+    for i in l_k_test:
+        L_K = i
+        f_hist, _ = run()
+        avg.append(np.mean(f_hist))
+        std_dev.append(np.std(f_hist))
+    pylab.figure() 
+    pylab.errorbar(l_k_test, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
+    pylab.title('Average Minimum f(x) with varying Markov Chain Length $L_k$')
+    pylab.xlabel('Markov Chain Length $L_k$ (# f(x) Evaluations)')
+    pylab.ylabel('Average Minimum f(x)')
+    pylab.show()
     ##################
     # avg, std_dev = [], []
     # d_grad = np.linspace(0, 2, 10)
