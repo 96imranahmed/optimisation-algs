@@ -8,6 +8,7 @@ import es
 import sim_ann_scale
 
 def parse(in_arr, idx_compare, idx_out, limit, is_greater = False):
+    # Extracts the relevant lists from the dataset such that a limit is satisfied
     ret_vals = []
     comp_arr = [i[idx_compare] for i in in_arr]
     idx_end = 0

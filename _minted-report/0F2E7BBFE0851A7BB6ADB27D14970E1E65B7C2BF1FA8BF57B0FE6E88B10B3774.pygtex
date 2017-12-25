@@ -1,0 +1,348 @@
+\begin{Verbatim}[commandchars=\\\{\}]
+\PYG{k+kn}{import} \PYG{n+nn}{numpy} \PYG{k+kn}{as} \PYG{n+nn}{np}
+\PYG{k+kn}{import} \PYG{n+nn}{math}
+\PYG{k+kn}{import} \PYG{n+nn}{random}
+\PYG{k+kn}{import} \PYG{n+nn}{pylab}
+\PYG{k+kn}{import} \PYG{n+nn}{pickle}
+\PYG{k+kn}{import} \PYG{n+nn}{time}
+
+\PYG{n}{DIM} \PYG{o}{=} \PYG{l+m+mi}{5}
+\PYG{n}{LIM} \PYG{o}{=} \PYG{l+m+mi}{1}
+\PYG{n}{SCALE} \PYG{o}{=} \PYG{l+m+mi}{512}
+\PYG{n}{PROB\PYGZus{}INIT} \PYG{o}{=} \PYG{l+m+mf}{0.8} \PYG{c+c1}{\PYGZsh{} Initial acceptance probability}
+\PYG{n}{OBJ\PYGZus{}LIM} \PYG{o}{=} \PYG{l+m+mi}{10000} \PYG{c+c1}{\PYGZsh{} Cap on \PYGZsh{} Evaluations}
+\PYG{n}{BURN\PYGZus{}IN} \PYG{o}{=} \PYG{l+m+mi}{100} \PYG{c+c1}{\PYGZsh{} Burn\PYGZhy{}in to find good starting point}
+\PYG{n}{D\PYGZus{}INIT\PYGZus{}MAG} \PYG{o}{=} \PYG{l+m+mi}{2} \PYG{c+c1}{\PYGZsh{} Initial D magnitude \PYGZhy{} 1 = identity}
+\PYG{n}{L\PYGZus{}K} \PYG{o}{=} \PYG{l+m+mi}{200} \PYG{c+c1}{\PYGZsh{} Length of Markov Chain}
+\PYG{n}{ETA\PYGZus{}MIN\PYGZus{}SCALE} \PYG{o}{=} \PYG{l+m+mf}{0.6} \PYG{c+c1}{\PYGZsh{} Proportional (to L\PYGZus{}k) length of Markov Chain acceptances}
+\PYG{n}{ALPHA} \PYG{o}{=} \PYG{l+m+mf}{0.95} \PYG{c+c1}{\PYGZsh{} Alpha for exponential cooling}
+\PYG{n}{ADAPTIVE} \PYG{o}{=} \PYG{n+nb+bp}{True} \PYG{c+c1}{\PYGZsh{} Use adaptive cooling}
+\PYG{n}{SHOW} \PYG{o}{=} \PYG{n+nb+bp}{False} \PYG{c+c1}{\PYGZsh{} Show plot}
+\PYG{n}{MIN\PYGZus{}ACCEPTANCE} \PYG{o}{=} \PYG{l+m+mf}{0.001} \PYG{c+c1}{\PYGZsh{} Min solution acceptance ratio}
+\PYG{n}{RESTART\PYGZus{}THRESH} \PYG{o}{=} \PYG{l+m+mi}{1000} \PYG{c+c1}{\PYGZsh{} Restart if no solutions found}
+\PYG{n}{TEMP\PYGZus{}WALK\PYGZus{}ID} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{,} \PYG{l+m+mi}{3}\PYG{p}{,} \PYG{l+m+mi}{6}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{c+c1}{\PYGZsh{} Desired Walks to be printed}
+\PYG{n}{HIST\PYGZus{}WIDTH} \PYG{o}{=} \PYG{l+m+mf}{0.35} \PYG{c+c1}{\PYGZsh{} Histogram width}
+\PYG{n}{TOT\PYGZus{}EVALS} \PYG{o}{=} \PYG{l+m+mi}{200} \PYG{c+c1}{\PYGZsh{} Number of runs for results}
+\PYG{n}{METHOD} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}Simulated Annealing\PYGZsq{}} \PYG{c+c1}{\PYGZsh{} Name of current method}
+\PYG{n}{M\PYGZus{}L} \PYG{o}{=} \PYG{l+m+mi}{5} \PYG{c+c1}{\PYGZsh{} Capped number of regions for histogram}
+\PYG{n}{DELTA} \PYG{o}{=} \PYG{l+m+mf}{2.5} \PYG{c+c1}{\PYGZsh{} For plotting \PYGZhy{} width of each f(x) calculation}
+
+\PYG{k}{def} \PYG{n+nf}{f\PYGZus{}ns}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{}Evaluates Eggholder function for an arbitrarily long \PYGZsq{}x\PYGZsq{}}
+    \PYG{n}{c\PYGZus{}sum} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)):}
+        \PYG{n}{c\PYGZus{}sum} \PYG{o}{+=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{*}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mi}{47}\PYG{p}{)}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mf}{0.5}\PYG{o}{*}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mi}{47}\PYG{p}{)))} \PYGZbs{}
+                \PYG{o}{\PYGZhy{}}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZhy{}} \PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{47}\PYG{p}{)))}
+    \PYG{k}{return} \PYG{n}{c\PYGZus{}sum}
+
+\PYG{k}{def} \PYG{n+nf}{f}\PYG{p}{(}\PYG{n}{x}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{} Evaluates Eggholder function for an arbitrarily long \PYGZsq{}x\PYGZsq{}}
+    \PYG{n}{c\PYGZus{}sum} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{x} \PYG{o}{=} \PYG{n}{SCALE}\PYG{o}{*}\PYG{n}{x} \PYG{c+c1}{\PYGZsh{} Scale\PYGZhy{}up to evaluate on (\PYGZhy{}512, 512) instead of (\PYGZhy{}1, 1)}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)):}
+        \PYG{n}{c\PYGZus{}sum} \PYG{o}{+=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{*}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mi}{47}\PYG{p}{)}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mf}{0.5}\PYG{o}{*}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{+} \PYG{l+m+mi}{47}\PYG{p}{)))} \PYGZbs{}
+                \PYG{o}{\PYGZhy{}}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sin}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{o}{\PYGZhy{}} \PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{\PYGZhy{}} \PYG{l+m+mi}{47}\PYG{p}{)))}
+    \PYG{k}{return} \PYG{n}{c\PYGZus{}sum}
+
+\PYG{k}{def} \PYG{n+nf}{gen\PYGZus{}x\PYGZus{}parks}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{D}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{} Uses the method to generate next solution as suggested by Parks [1990]}
+    \PYG{n}{u} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{uniform}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{DIM}\PYG{p}{)}
+    \PYG{n}{x\PYGZus{}new} \PYG{o}{=} \PYG{n}{x} \PYG{o}{+} \PYG{n}{np}\PYG{o}{.}\PYG{n}{matmul}\PYG{p}{(}\PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{)}
+    \PYG{c+c1}{\PYGZsh{} Ensure generated solution does not leave bounds of problem}
+    \PYG{c+c1}{\PYGZsh{} Cap at +/\PYGZhy{} 512 for every dimension (scaled at +/\PYGZhy{} 1)}
+    \PYG{n}{x\PYGZus{}new}\PYG{p}{[}\PYG{n}{x\PYGZus{}new} \PYG{o}{\PYGZgt{}} \PYG{n}{LIM}\PYG{p}{]} \PYG{o}{=} \PYG{n}{LIM}
+    \PYG{n}{x\PYGZus{}new}\PYG{p}{[}\PYG{n}{x\PYGZus{}new} \PYG{o}{\PYGZlt{}} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{*}\PYG{n}{LIM}\PYG{p}{]} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{*}\PYG{n}{LIM}
+    \PYG{k}{return} \PYG{n}{x\PYGZus{}new}\PYG{p}{,} \PYG{n}{u}
+
+\PYG{k}{def} \PYG{n+nf}{gen\PYGZus{}D\PYGZus{}update}\PYG{p}{(}\PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{,} \PYG{n}{alpha} \PYG{o}{=} \PYG{l+m+mf}{0.1}\PYG{p}{,} \PYG{n}{weighting} \PYG{o}{=} \PYG{l+m+mf}{2.1}\PYG{p}{):}
+    \PYG{c+c1}{\PYGZsh{} Update the diagonal matrix D as suggested by Parks}
+    \PYG{n}{R} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{eye}\PYG{p}{(}\PYG{n}{DIM}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{matmul}\PYG{p}{(}\PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{)))}
+    \PYG{n}{D\PYGZus{}new} \PYG{o}{=} \PYG{p}{(}\PYG{l+m+mi}{1}\PYG{o}{\PYGZhy{}}\PYG{n}{alpha}\PYG{p}{)}\PYG{o}{*}\PYG{n}{D} \PYG{o}{+} \PYG{n}{alpha}\PYG{o}{*}\PYG{n}{weighting}\PYG{o}{*}\PYG{n}{R}
+    \PYG{n}{D\PYGZus{}new} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{clip}\PYG{p}{(}\PYG{n}{D\PYGZus{}new}\PYG{p}{,} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{)} \PYG{c+c1}{\PYGZsh{}Clip values to +/\PYGZhy{} 1}
+    \PYG{k}{return} \PYG{n}{D\PYGZus{}new}
+
+\PYG{k}{def} \PYG{n+nf}{check\PYGZus{}accept}\PYG{p}{(}\PYG{n}{df}\PYG{p}{,} \PYG{n}{T}\PYG{p}{,} \PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{):}
+    \PYG{k}{if} \PYG{n}{df} \PYG{o}{\PYGZlt{}} \PYG{l+m+mi}{0}\PYG{p}{:}
+        \PYG{k}{return} \PYG{n+nb+bp}{True}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{n}{R} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{eye}\PYG{p}{(}\PYG{n}{DIM}\PYG{p}{)}\PYG{o}{*}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{abs}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{matmul}\PYG{p}{(}\PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{)))}
+        \PYG{n}{d\PYGZus{}hat} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{sqrt}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{sum}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{square}\PYG{p}{(}\PYG{n}{R}\PYG{p}{)))}
+        \PYG{n}{p} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1} \PYG{o}{*} \PYG{n}{df}\PYG{o}{/}\PYG{p}{(}\PYG{n}{T}\PYG{o}{*}\PYG{n}{d\PYGZus{}hat}\PYG{p}{))}
+        \PYG{n}{guess} \PYG{o}{=} \PYG{n}{random}\PYG{o}{.}\PYG{n}{random}\PYG{p}{()}
+        \PYG{k}{return} \PYG{n}{guess} \PYG{o}{\PYGZlt{}} \PYG{n}{p}
+
+\PYG{k}{def} \PYG{n+nf}{evaluate}\PYG{p}{(}\PYG{n}{should\PYGZus{}plot} \PYG{o}{=} \PYG{n+nb+bp}{False}\PYG{p}{,} \PYG{n}{ret\PYGZus{}stats} \PYG{o}{=} \PYG{n+nb+bp}{False}\PYG{p}{):}
+    \PYG{n}{eval\PYGZus{}time} \PYG{o}{=} \PYG{n}{time}\PYG{o}{.}\PYG{n}{time}\PYG{p}{()}
+    \PYG{n}{stat\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[]}
+
+    \PYG{c+c1}{\PYGZsh{}Initialisations}
+    \PYG{n}{x\PYGZus{}init} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{random}\PYG{o}{.}\PYG{n}{uniform}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{p}{,} \PYG{l+m+mi}{1}\PYG{p}{,} \PYG{n}{DIM}\PYG{p}{)}
+
+    \PYG{n}{x\PYGZus{}star} \PYG{o}{=} \PYG{n+nb+bp}{None}
+    \PYG{n}{f\PYGZus{}star} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{inf}
+    \PYG{n}{env} \PYG{o}{=} \PYG{n}{BURN\PYGZus{}IN} \PYG{o}{+} \PYG{l+m+mi}{1}
+    \PYG{n}{D\PYGZus{}init} \PYG{o}{=} \PYG{n}{D\PYGZus{}INIT\PYGZus{}MAG}\PYG{o}{*}\PYG{n}{np}\PYG{o}{.}\PYG{n}{eye}\PYG{p}{(}\PYG{n}{DIM}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Search locally via Burn In to find starting Temperature}
+    \PYG{n}{diff\PYGZus{}buffer} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{burn\PYGZus{}f} \PYG{o}{=} \PYG{n}{f}\PYG{p}{(}\PYG{n}{x\PYGZus{}init}\PYG{p}{)}
+    \PYG{n}{burn\PYGZus{}x} \PYG{o}{=} \PYG{n}{x\PYGZus{}init}
+    \PYG{n}{burn\PYGZus{}d} \PYG{o}{=} \PYG{n}{D\PYGZus{}init}
+    \PYG{k}{while} \PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{diff\PYGZus{}buffer}\PYG{p}{)} \PYG{o}{\PYGZlt{}} \PYG{n}{BURN\PYGZus{}IN}\PYG{p}{):}
+        \PYG{n}{new\PYGZus{}burn\PYGZus{}x}\PYG{p}{,} \PYG{n}{u} \PYG{o}{=} \PYG{n}{gen\PYGZus{}x\PYGZus{}parks}\PYG{p}{(}\PYG{n}{burn\PYGZus{}x}\PYG{p}{,} \PYG{n}{burn\PYGZus{}d}\PYG{p}{)}
+        \PYG{n}{new\PYGZus{}burn\PYGZus{}f} \PYG{o}{=} \PYG{n}{f}\PYG{p}{(}\PYG{n}{new\PYGZus{}burn\PYGZus{}x}\PYG{p}{)}
+        \PYG{n}{diff\PYGZus{}buffer}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{new\PYGZus{}burn\PYGZus{}f} \PYG{o}{\PYGZhy{}} \PYG{n}{burn\PYGZus{}f}\PYG{p}{)}
+        \PYG{n}{burn\PYGZus{}f} \PYG{o}{=} \PYG{n}{new\PYGZus{}burn\PYGZus{}f}
+        \PYG{n}{burn\PYGZus{}x} \PYG{o}{=} \PYG{n}{new\PYGZus{}burn\PYGZus{}x}
+        \PYG{k}{if} \PYG{n}{burn\PYGZus{}f} \PYG{o}{\PYGZlt{}} \PYG{n}{f\PYGZus{}star}\PYG{p}{:}
+            \PYG{n}{f\PYGZus{}star} \PYG{o}{=} \PYG{n}{burn\PYGZus{}f}
+            \PYG{n}{x\PYGZus{}star} \PYG{o}{=} \PYG{n}{burn\PYGZus{}x}
+            \PYG{n}{burn\PYGZus{}d} \PYG{o}{=} \PYG{n}{gen\PYGZus{}D\PYGZus{}update}\PYG{p}{(}\PYG{n}{burn\PYGZus{}d}\PYG{p}{,} \PYG{n}{u}\PYG{p}{)}
+    \PYG{n}{b\PYGZus{}f} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{diff\PYGZus{}buffer}\PYG{p}{)}
+    \PYG{n}{T\PYGZus{}avg} \PYG{o}{=} \PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{1}\PYG{o}{*}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{b\PYGZus{}f}\PYG{p}{[}\PYG{n}{b\PYGZus{}f} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{0}\PYG{p}{]))}\PYG{o}{/}\PYG{n}{np}\PYG{o}{.}\PYG{n}{log}\PYG{p}{(}\PYG{n}{PROB\PYGZus{}INIT}\PYG{p}{)}
+    \PYG{n}{T\PYGZus{}std} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{std}\PYG{p}{(}\PYG{n}{b\PYGZus{}f}\PYG{p}{)}
+
+    \PYG{c+c1}{\PYGZsh{} Reset to starting value}
+    \PYG{n}{x} \PYG{o}{=} \PYG{n}{x\PYGZus{}star}
+    \PYG{n}{f\PYGZus{}x} \PYG{o}{=} \PYG{n}{f}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)}
+    \PYG{n}{D} \PYG{o}{=} \PYG{n}{D\PYGZus{}init}
+    \PYG{n}{T} \PYG{o}{=} \PYG{n}{T\PYGZus{}avg}
+
+    \PYG{n+nb}{buffer} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{l\PYGZus{}cur} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{eta\PYGZus{}cur} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{hist} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{did\PYGZus{}find\PYGZus{}sol} \PYG{o}{=} \PYG{n+nb+bp}{False}
+    \PYG{n}{acc} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{return\PYGZus{}to\PYGZus{}base} \PYG{o}{=} \PYG{l+m+mi}{0}
+    \PYG{n}{temp\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{cur\PYGZus{}temp\PYGZus{}walk} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{f\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{k}{while} \PYG{p}{(}\PYG{n}{env} \PYG{o}{\PYGZlt{}} \PYG{n}{OBJ\PYGZus{}LIM}\PYG{p}{):}
+        \PYG{k}{if} \PYG{n}{eta\PYGZus{}cur} \PYG{o}{\PYGZgt{}} \PYG{n}{ETA\PYGZus{}MIN\PYGZus{}SCALE}\PYG{o}{*}\PYG{n}{L\PYGZus{}K} \PYG{o+ow}{or} \PYG{n}{l\PYGZus{}cur} \PYG{o}{\PYGZgt{}} \PYG{n}{L\PYGZus{}K}\PYG{p}{:}
+            \PYG{n}{eta\PYGZus{}cur} \PYG{o}{=} \PYG{l+m+mi}{0}
+            \PYG{n}{l\PYGZus{}cur} \PYG{o}{=} \PYG{l+m+mi}{0}
+            \PYG{k}{if} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{cur\PYGZus{}temp\PYGZus{}walk}\PYG{p}{)} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{0}\PYG{p}{:}
+                \PYG{n}{temp\PYGZus{}hist}\PYG{o}{.}\PYG{n}{append}\PYG{p}{((}\PYG{n}{T}\PYG{p}{,} \PYG{n}{cur\PYGZus{}temp\PYGZus{}walk}\PYG{p}{))}
+            \PYG{n}{cur\PYGZus{}temp\PYGZus{}walk} \PYG{o}{=} \PYG{p}{[]}
+            \PYG{k}{if} \PYG{n+nb}{len}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)} \PYG{o}{\PYGZgt{}} \PYG{l+m+mi}{1}\PYG{p}{:}
+                \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{ADAPTIVE}\PYG{p}{:}
+                    \PYG{c+c1}{\PYGZsh{} Exponential Cooling Scheme (proposed by Kirkpatrick)}
+                    \PYG{n}{T} \PYG{o}{=} \PYG{n}{ALPHA} \PYG{o}{*} \PYG{n}{T}
+                \PYG{k}{else}\PYG{p}{:}
+                    \PYG{c+c1}{\PYGZsh{} Adaptive Cooling Scheme}
+                    \PYG{n}{a} \PYG{o}{=} \PYG{n+nb}{max}\PYG{p}{(}\PYG{l+m+mf}{0.5}\PYG{p}{,} \PYG{n}{np}\PYG{o}{.}\PYG{n}{exp}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mf}{0.7}\PYG{o}{*}\PYG{n}{T}\PYG{o}{/}\PYG{n}{np}\PYG{o}{.}\PYG{n}{std}\PYG{p}{(}\PYG{n+nb}{buffer}\PYG{p}{)))}
+                    \PYG{n}{T} \PYG{o}{=} \PYG{n}{a}\PYG{o}{*}\PYG{n}{T} \PYG{c+c1}{\PYGZsh{}As in notes}
+            \PYG{n+nb}{buffer} \PYG{o}{=} \PYG{p}{[]}
+            \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{did\PYGZus{}find\PYGZus{}sol} \PYG{o+ow}{and} \PYG{n}{acc}\PYG{o}{/}\PYG{n}{env} \PYG{o}{\PYGZlt{}} \PYG{n}{MIN\PYGZus{}ACCEPTANCE}\PYG{p}{:}
+                \PYG{c+c1}{\PYGZsh{} Halt search when these constraints are satisfied}
+                \PYG{c+c1}{\PYGZsh{} print(\PYGZsq{}Ended at \PYGZsq{}, env, \PYGZsq{}iterations\PYGZsq{})}
+                \PYG{k}{break}
+            \PYG{n}{did\PYGZus{}find\PYGZus{}sol} \PYG{o}{=} \PYG{n+nb+bp}{False}
+        \PYG{n}{x\PYGZus{}dash}\PYG{p}{,} \PYG{n}{u} \PYG{o}{=} \PYG{n}{gen\PYGZus{}x\PYGZus{}parks}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{D}\PYG{p}{)}
+        \PYG{n}{env} \PYG{o}{+=} \PYG{l+m+mi}{1}
+        \PYG{n}{f\PYGZus{}x\PYGZus{}dash} \PYG{o}{=} \PYG{n}{f}\PYG{p}{(}\PYG{n}{x\PYGZus{}dash}\PYG{p}{)}
+        \PYG{n}{l\PYGZus{}cur} \PYG{o}{+=} \PYG{l+m+mi}{1}
+        \PYG{n}{df} \PYG{o}{=} \PYG{n}{f\PYGZus{}x\PYGZus{}dash} \PYG{o}{\PYGZhy{}} \PYG{n}{f\PYGZus{}x}
+        \PYG{n}{stat\PYGZus{}hist}\PYG{o}{.}\PYG{n}{append}\PYG{p}{((}\PYG{n}{f\PYGZus{}x}\PYG{p}{,} \PYG{n}{f\PYGZus{}star}\PYG{p}{,} \PYG{n}{time}\PYG{o}{.}\PYG{n}{time}\PYG{p}{()} \PYG{o}{\PYGZhy{}} \PYG{n}{eval\PYGZus{}time}\PYG{p}{,} \PYG{n}{env}\PYG{p}{))}
+        \PYG{k}{if} \PYG{n}{check\PYGZus{}accept}\PYG{p}{(}\PYG{n}{df}\PYG{p}{,} \PYG{n}{T}\PYG{p}{,} \PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{):}
+            \PYG{n}{acc} \PYG{o}{+=} \PYG{l+m+mi}{1}
+            \PYG{n}{hist}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{x\PYGZus{}dash}\PYG{p}{)}
+            \PYG{n}{cur\PYGZus{}temp\PYGZus{}walk}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{x\PYGZus{}dash}\PYG{p}{)}
+            \PYG{n}{eta\PYGZus{}cur} \PYG{o}{+=} \PYG{l+m+mi}{1}
+            \PYG{n+nb}{buffer}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{f\PYGZus{}x\PYGZus{}dash}\PYG{p}{)}
+            \PYG{n}{x} \PYG{o}{=} \PYG{n}{x\PYGZus{}dash}
+            \PYG{n}{f\PYGZus{}x} \PYG{o}{=} \PYG{n}{f\PYGZus{}x\PYGZus{}dash}
+            \PYG{n}{f\PYGZus{}hist}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{f\PYGZus{}x}\PYG{p}{)}
+            \PYG{k}{if} \PYG{n}{f\PYGZus{}x} \PYG{o}{\PYGZlt{}} \PYG{n}{f\PYGZus{}star}\PYG{p}{:}
+                \PYG{n}{f\PYGZus{}star} \PYG{o}{=} \PYG{n}{f\PYGZus{}x}
+                \PYG{n}{x\PYGZus{}star} \PYG{o}{=} \PYG{n}{x}
+                \PYG{n}{D} \PYG{o}{=} \PYG{n}{gen\PYGZus{}D\PYGZus{}update}\PYG{p}{(}\PYG{n}{D}\PYG{p}{,} \PYG{n}{u}\PYG{p}{)}
+                \PYG{n}{did\PYGZus{}find\PYGZus{}sol} \PYG{o}{=} \PYG{n+nb+bp}{True}
+            \PYG{k}{else}\PYG{p}{:}
+                \PYG{n}{return\PYGZus{}to\PYGZus{}base} \PYG{o}{+=} \PYG{l+m+mi}{1}
+            \PYG{k}{if} \PYG{n}{return\PYGZus{}to\PYGZus{}base} \PYG{o}{\PYGZgt{}} \PYG{n}{RESTART\PYGZus{}THRESH}\PYG{p}{:}
+                \PYG{n}{x} \PYG{o}{=} \PYG{n}{x\PYGZus{}star}
+                \PYG{n}{eta\PYGZus{}cur} \PYG{o}{=} \PYG{l+m+mi}{0}
+                \PYG{n}{l\PYGZus{}cur} \PYG{o}{=} \PYG{l+m+mi}{0}
+                \PYG{n}{did\PYGZus{}find\PYGZus{}sol} \PYG{o}{=} \PYG{n+nb+bp}{False}
+                \PYG{n}{return\PYGZus{}to\PYGZus{}base} \PYG{o}{=} \PYG{l+m+mi}{0}
+                \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Restarting search from current best soln\PYGZsq{}}\PYG{p}{)}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{k}{pass}
+    \PYG{k}{if} \PYG{n}{env} \PYG{o}{\PYGZgt{}=} \PYG{n}{OBJ\PYGZus{}LIM}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} print(\PYGZsq{}Terminated search due to maximum allowable \PYGZsh{} objective functions being exceeded\PYGZsq{})}
+        \PYG{k}{pass}
+    \PYG{n}{x\PYGZus{}star} \PYG{o}{=} \PYG{n}{SCALE} \PYG{o}{*} \PYG{n}{x\PYGZus{}star}
+    \PYG{k}{if} \PYG{n}{should\PYGZus{}plot}\PYG{p}{:}
+        \PYG{c+c1}{\PYGZsh{} Plotting code}
+        \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}NOTE: \PYGZsq{}}\PYG{p}{,} \PYG{n}{f\PYGZus{}star}\PYG{p}{,} \PYG{n}{x\PYGZus{}star}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{DIM} \PYG{o}{==} \PYG{l+m+mi}{2}\PYG{p}{:}
+            \PYG{n}{x\PYGZus{}one\PYGZus{}mesh} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{513}\PYG{p}{,} \PYG{l+m+mi}{513}\PYG{p}{,} \PYG{n}{DELTA}\PYG{p}{)}
+            \PYG{n}{x\PYGZus{}two\PYGZus{}mesh} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{513}\PYG{p}{,} \PYG{l+m+mi}{513}\PYG{p}{,} \PYG{n}{DELTA}\PYG{p}{)}
+            \PYG{n}{X\PYGZus{}1}\PYG{p}{,} \PYG{n}{X\PYGZus{}2} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{meshgrid}\PYG{p}{(}\PYG{n}{x\PYGZus{}one\PYGZus{}mesh}\PYG{p}{,} \PYG{n}{x\PYGZus{}two\PYGZus{}mesh}\PYG{p}{)}
+            \PYG{n}{Z} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{(}\PYG{n}{X\PYGZus{}1}\PYG{p}{))}
+            \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x\PYGZus{}one\PYGZus{}mesh}\PYG{p}{)):}
+                \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x\PYGZus{}two\PYGZus{}mesh}\PYG{p}{)):}
+                    \PYG{n}{Z}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{=} \PYG{n}{f\PYGZus{}ns}\PYG{p}{([}\PYG{n}{x\PYGZus{}two\PYGZus{}mesh}\PYG{p}{[}\PYG{n}{j}\PYG{p}{],} \PYG{n}{x\PYGZus{}one\PYGZus{}mesh}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]])}
+            \PYG{k}{for} \PYG{n}{idx} \PYG{o+ow}{in} \PYG{n}{TEMP\PYGZus{}WALK\PYGZus{}ID}\PYG{p}{:}
+                \PYG{n}{T}\PYG{p}{,} \PYG{n}{temp\PYGZus{}hist\PYGZus{}coords} \PYG{o}{=} \PYG{n}{temp\PYGZus{}hist}\PYG{p}{[}\PYG{n}{idx}\PYG{p}{]}
+                \PYG{n}{temp\PYGZus{}hist\PYGZus{}coords} \PYG{o}{=} \PYG{n}{SCALE} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{temp\PYGZus{}hist\PYGZus{}coords}\PYG{p}{)}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{contour}\PYG{p}{(}\PYG{n}{X\PYGZus{}1}\PYG{p}{,} \PYG{n}{X\PYGZus{}2}\PYG{p}{,} \PYG{n}{Z}\PYG{p}{,} \PYG{n}{cmap}\PYG{o}{=}\PYG{n}{pylab}\PYG{o}{.}\PYG{n}{cm}\PYG{o}{.}\PYG{n}{bone}\PYG{p}{)}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{temp\PYGZus{}hist\PYGZus{}coords}\PYG{p}{[:,} \PYG{l+m+mi}{0}\PYG{p}{],} \PYG{n}{temp\PYGZus{}hist\PYGZus{}coords}\PYG{p}{[:,} \PYG{l+m+mi}{1}\PYG{p}{],} \PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}o\PYGZsq{}}\PYG{p}{,}\PYG{n}{color}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{,} \PYG{n}{zorder} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{p}{)}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Temperature Walk for T = \PYGZsq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{around}\PYG{p}{(}\PYG{n}{T}\PYG{p}{,} \PYG{l+m+mi}{2}\PYG{p}{)))}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZdl{}x\PYGZus{}\PYGZob{}1\PYGZcb{}\PYGZdl{}\PYGZsq{}}\PYG{p}{)}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZdl{}x\PYGZus{}\PYGZob{}2\PYGZcb{}\PYGZdl{}\PYGZsq{}}\PYG{p}{)}
+                \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+            \PYG{n}{hist} \PYG{o}{=} \PYG{n}{SCALE} \PYG{o}{*} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{hist}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{contour}\PYG{p}{(}\PYG{n}{X\PYGZus{}1}\PYG{p}{,} \PYG{n}{X\PYGZus{}2}\PYG{p}{,} \PYG{n}{Z}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{hist}\PYG{p}{[:,} \PYG{l+m+mi}{0}\PYG{p}{],} \PYG{n}{hist}\PYG{p}{[:,} \PYG{l+m+mi}{1}\PYG{p}{],} \PYG{l+s+s1}{\PYGZsq{}o\PYGZsq{}}\PYG{p}{,}\PYG{n}{color}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{,} \PYG{n}{zorder} \PYG{o}{=} \PYG{l+m+mi}{1}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Visited Points (All Temperatures)\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZdl{}x\PYGZus{}\PYGZob{}1\PYGZcb{}\PYGZdl{}\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZdl{}x\PYGZus{}\PYGZob{}2\PYGZcb{}\PYGZdl{}\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+        \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+        \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{plot}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{),} \PYG{l+s+s1}{\PYGZsq{}\PYGZhy{}\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Objective Function f(x) with \PYGZsh{} Accepted Iterations\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZsh{} Accepted Iterations\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Objective Function value f(x)\PYGZsq{}}\PYG{p}{)}
+        \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+    \PYG{k}{if} \PYG{n}{ret\PYGZus{}stats}\PYG{p}{:}
+        \PYG{k}{return} \PYG{n}{f\PYGZus{}star}\PYG{p}{,} \PYG{n}{x\PYGZus{}star}\PYG{p}{,} \PYG{n}{stat\PYGZus{}hist}
+    \PYG{k}{else}\PYG{p}{:}
+        \PYG{k}{return} \PYG{n}{f\PYGZus{}star}\PYG{p}{,} \PYG{n}{x\PYGZus{}star}
+
+\PYG{k}{def} \PYG{n+nf}{round\PYGZus{}to\PYGZus{}multiple}\PYG{p}{(}\PYG{n}{x}\PYG{p}{,} \PYG{n}{bucket} \PYG{o}{=} \PYG{l+m+mi}{10}\PYG{p}{):}
+    \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x}\PYG{p}{)):}
+        \PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]} \PYG{o}{=} \PYG{n+nb}{int}\PYG{p}{(}\PYG{n}{bucket} \PYG{o}{*} \PYG{n+nb}{round}\PYG{p}{(}\PYG{n+nb}{float}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{n}{i}\PYG{p}{])}\PYG{o}{/}\PYG{n}{bucket}\PYG{p}{))}
+    \PYG{k}{return} \PYG{n+nb}{tuple}\PYG{p}{(}\PYG{n}{x}\PYG{o}{.}\PYG{n}{tolist}\PYG{p}{())}
+
+\PYG{k}{def} \PYG{n+nf}{run}\PYG{p}{(}\PYG{n}{should\PYGZus{}plot} \PYG{o}{=} \PYG{n+nb+bp}{False}\PYG{p}{):}
+    \PYG{k}{global} \PYG{n}{TOT\PYGZus{}EVALS}\PYG{p}{,} \PYG{n}{SHOW}
+    \PYG{n}{f\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{x\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[]}
+    \PYG{n}{histogram} \PYG{o}{=} \PYG{p}{\PYGZob{}\PYGZcb{}}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{while} \PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{)} \PYG{o}{\PYGZlt{}} \PYG{n}{TOT\PYGZus{}EVALS}\PYG{p}{):}
+        \PYG{n}{f\PYGZus{}cur}\PYG{p}{,} \PYG{n}{x\PYGZus{}cur} \PYG{o}{=} \PYG{n}{evaluate}\PYG{p}{(}\PYG{n}{SHOW}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{SHOW}\PYG{p}{:} \PYG{n}{TOT\PYGZus{}EVALS} \PYG{o}{=} \PYG{l+m+mi}{1}
+        \PYG{n}{f\PYGZus{}hist}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{f\PYGZus{}cur}\PYG{p}{)}
+        \PYG{n}{x\PYGZus{}hist}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{x\PYGZus{}cur}\PYG{o}{.}\PYG{n}{copy}\PYG{p}{())}
+        \PYG{n}{x\PYGZus{}b} \PYG{o}{=} \PYG{n}{round\PYGZus{}to\PYGZus{}multiple}\PYG{p}{(}\PYG{n}{x\PYGZus{}cur}\PYG{p}{)}
+        \PYG{k}{if} \PYG{n}{x\PYGZus{}b} \PYG{o+ow}{in} \PYG{n}{histogram}\PYG{p}{:}
+            \PYG{n}{histogram}\PYG{p}{[}\PYG{n}{x\PYGZus{}b}\PYG{p}{]}\PYG{o}{.}\PYG{n}{append}\PYG{p}{(}\PYG{n}{f\PYGZus{}cur}\PYG{p}{)}
+        \PYG{k}{else}\PYG{p}{:}
+            \PYG{n}{histogram}\PYG{p}{[}\PYG{n}{x\PYGZus{}b}\PYG{p}{]} \PYG{o}{=} \PYG{p}{[}\PYG{n}{f\PYGZus{}cur}\PYG{p}{]}
+        \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{} Current run: \PYGZsq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{))} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{} Value: \PYGZsq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{f\PYGZus{}cur}\PYG{p}{),} \PYG{n}{end}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}r}\PYG{l+s+s1}{\PYGZsq{}}\PYG{p}{)}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s2}{*********************\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Lowest Minimum Found at: \PYGZdq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{x\PYGZus{}hist}\PYG{p}{[}\PYG{n}{np}\PYG{o}{.}\PYG{n}{argmin}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{)])} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{} Value: \PYGZdq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{min}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{)))}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}Average Minimum Value: \PYGZdq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{))} \PYG{o}{+} \PYG{l+s+s2}{\PYGZdq{} Standard Deviation: \PYGZdq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{std}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{)))}
+    \PYG{k}{print}\PYG{p}{(}\PYG{l+s+s2}{\PYGZdq{}*********************\PYGZdq{}}\PYG{p}{)}
+    \PYG{k}{if} \PYG{o+ow}{not} \PYG{n}{SHOW} \PYG{o+ow}{or} \PYG{o+ow}{not} \PYG{n}{should\PYGZus{}plot}\PYG{p}{:}
+        \PYG{n}{x\PYGZus{}one\PYGZus{}mesh} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{513}\PYG{p}{,} \PYG{l+m+mi}{513}\PYG{p}{,} \PYG{n}{DELTA}\PYG{p}{)}
+        \PYG{n}{x\PYGZus{}two\PYGZus{}mesh} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{o}{\PYGZhy{}}\PYG{l+m+mi}{513}\PYG{p}{,} \PYG{l+m+mi}{513}\PYG{p}{,} \PYG{n}{DELTA}\PYG{p}{)}
+        \PYG{n}{X\PYGZus{}1}\PYG{p}{,} \PYG{n}{X\PYGZus{}2} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{meshgrid}\PYG{p}{(}\PYG{n}{x\PYGZus{}one\PYGZus{}mesh}\PYG{p}{,} \PYG{n}{x\PYGZus{}two\PYGZus{}mesh}\PYG{p}{)}
+        \PYG{n}{Z} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{zeros}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{shape}\PYG{p}{(}\PYG{n}{X\PYGZus{}1}\PYG{p}{))}
+        \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x\PYGZus{}one\PYGZus{}mesh}\PYG{p}{)):}
+            \PYG{k}{for} \PYG{n}{j} \PYG{o+ow}{in} \PYG{n+nb}{range}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x\PYGZus{}two\PYGZus{}mesh}\PYG{p}{)):}
+                \PYG{n}{Z}\PYG{p}{[}\PYG{n}{i}\PYG{p}{,} \PYG{n}{j}\PYG{p}{]} \PYG{o}{=} \PYG{n}{f\PYGZus{}ns}\PYG{p}{([}\PYG{n}{x\PYGZus{}two\PYGZus{}mesh}\PYG{p}{[}\PYG{n}{j}\PYG{p}{],} \PYG{n}{x\PYGZus{}one\PYGZus{}mesh}\PYG{p}{[}\PYG{n}{i}\PYG{p}{]])}
+        \PYG{n}{histogram\PYGZus{}list} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n}{histogram}\PYG{o}{.}\PYG{n}{items}\PYG{p}{())}
+        \PYG{n}{histogram\PYGZus{}list} \PYG{o}{=} \PYG{n+nb}{list}\PYG{p}{(}\PYG{n+nb}{zip}\PYG{p}{([}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{histogram\PYGZus{}list}\PYG{p}{],} \PYG{p}{[}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]} \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{histogram\PYGZus{}list}\PYG{p}{],} \PYG{p}{[}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{])} \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{histogram\PYGZus{}list}\PYG{p}{]))}
+        \PYG{n}{histogram\PYGZus{}list}\PYG{o}{.}\PYG{n}{sort}\PYG{p}{(}\PYG{n}{key} \PYG{o}{=} \PYG{k}{lambda} \PYG{n}{t}\PYG{p}{:} \PYG{n}{t}\PYG{p}{[}\PYG{l+m+mi}{2}\PYG{p}{],} \PYG{n}{reverse}\PYG{o}{=} \PYG{n+nb+bp}{True}\PYG{p}{)}
+        \PYG{n}{histo\PYGZus{}x} \PYG{o}{=} \PYG{p}{[}\PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{])} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{}}\PYG{l+s+se}{\PYGZbs{}n}\PYG{l+s+s1}{ f(x):\PYGZsq{}} \PYG{o}{+} \PYG{n+nb}{str}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{around}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{mean}\PYG{p}{(}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{]),} \PYG{l+m+mi}{1}\PYG{p}{))} \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{histogram\PYGZus{}list}\PYG{p}{]}
+        \PYG{n}{histo\PYGZus{}x\PYGZus{}cord} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{([}\PYG{n}{x}\PYG{p}{[}\PYG{l+m+mi}{0}\PYG{p}{]} \PYG{k}{for} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n}{histogram\PYGZus{}list}\PYG{p}{])[:}\PYG{n}{M\PYGZus{}L}\PYG{p}{]}
+        \PYG{n}{histo\PYGZus{}y} \PYG{o}{=} \PYG{p}{[}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{y}\PYG{p}{[}\PYG{l+m+mi}{1}\PYG{p}{])}\PYG{o}{/}\PYG{n}{TOT\PYGZus{}EVALS} \PYG{k}{for} \PYG{n}{y} \PYG{o+ow}{in} \PYG{n}{histogram\PYGZus{}list}\PYG{p}{]}
+        \PYG{n}{histo\PYGZus{}x} \PYG{o}{=} \PYG{n}{histo\PYGZus{}x}\PYG{p}{[:}\PYG{n}{M\PYGZus{}L}\PYG{p}{]}
+        \PYG{n}{histo\PYGZus{}y} \PYG{o}{=} \PYG{n}{histo\PYGZus{}y}\PYG{p}{[:}\PYG{n}{M\PYGZus{}L}\PYG{p}{]}
+        \PYG{n}{x\PYGZus{}hist} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{x\PYGZus{}hist}\PYG{p}{)}
+        \PYG{n}{f\PYGZus{}hist} \PYG{o}{=} \PYG{n}{np}\PYG{o}{.}\PYG{n}{array}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{p}{)}
+        \PYG{k}{if} \PYG{p}{(}\PYG{n}{DIM} \PYG{o}{==} \PYG{l+m+mi}{2}\PYG{p}{):}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{bar}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{histo\PYGZus{}x}\PYG{p}{)),} \PYG{n}{histo\PYGZus{}y}\PYG{p}{,} \PYG{n}{HIST\PYGZus{}WIDTH}\PYG{p}{,} \PYG{n}{color} \PYG{o}{=} \PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{METHOD} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{} Minima Regions\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{xticks}\PYG{p}{(}\PYG{n}{np}\PYG{o}{.}\PYG{n}{arange}\PYG{p}{(}\PYG{n+nb}{len}\PYG{p}{(}\PYG{n}{histo\PYGZus{}x}\PYG{p}{)),} \PYG{n}{histo\PYGZus{}x}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Minima Regions (with mean f(x))\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}Proportion of runs within region\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{tight\PYGZus{}layout}\PYG{p}{()}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{figure}\PYG{p}{()}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{contour}\PYG{p}{(}\PYG{n}{X\PYGZus{}1}\PYG{p}{,} \PYG{n}{X\PYGZus{}2}\PYG{p}{,} \PYG{n}{Z}\PYG{p}{,} \PYG{n}{cmap}\PYG{o}{=}\PYG{n}{pylab}\PYG{o}{.}\PYG{n}{cm}\PYG{o}{.}\PYG{n}{bone}\PYG{p}{)}
+            \PYG{n}{marker\PYGZus{}size} \PYG{o}{=} \PYG{p}{[}\PYG{l+m+mi}{10}\PYG{o}{*}\PYG{l+m+mi}{2}\PYG{o}{**}\PYG{p}{(}\PYG{l+m+mi}{10}\PYG{o}{*}\PYG{n}{i}\PYG{p}{)} \PYG{k}{for} \PYG{n}{i} \PYG{o+ow}{in} \PYG{n}{histo\PYGZus{}y}\PYG{p}{]}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{scatter}\PYG{p}{(}\PYG{n}{histo\PYGZus{}x\PYGZus{}cord}\PYG{p}{[:,} \PYG{l+m+mi}{0}\PYG{p}{],} \PYG{n}{histo\PYGZus{}x\PYGZus{}cord}\PYG{p}{[:,} \PYG{l+m+mi}{1}\PYG{p}{],} \PYG{n}{c}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}r\PYGZsq{}}\PYG{p}{,} \PYG{n}{s} \PYG{o}{=} \PYG{n}{marker\PYGZus{}size}\PYG{p}{,} \PYG{n}{edgecolor}\PYG{o}{=}\PYG{l+s+s1}{\PYGZsq{}black\PYGZsq{}}\PYG{p}{,} \PYG{n}{zorder} \PYG{o}{=} \PYG{l+m+mi}{2}\PYG{p}{)}
+            \PYG{c+c1}{\PYGZsh{} pylab.plot(x\PYGZus{}hist[:, 0], x\PYGZus{}hist[:, 1], \PYGZsq{}o\PYGZsq{})}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{title}\PYG{p}{(}\PYG{n}{METHOD} \PYG{o}{+} \PYG{l+s+s1}{\PYGZsq{} Evaluations\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{xlabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZdl{}x\PYGZus{}\PYGZob{}1\PYGZcb{}\PYGZdl{}\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{ylabel}\PYG{p}{(}\PYG{l+s+s1}{\PYGZsq{}\PYGZdl{}x\PYGZus{}\PYGZob{}2\PYGZcb{}\PYGZdl{}\PYGZsq{}}\PYG{p}{)}
+            \PYG{n}{pylab}\PYG{o}{.}\PYG{n}{show}\PYG{p}{()}
+    \PYG{n}{combined} \PYG{o}{=} \PYG{n+nb}{zip}\PYG{p}{(}\PYG{n}{f\PYGZus{}hist}\PYG{o}{.}\PYG{n}{tolist}\PYG{p}{(),} \PYG{n}{x\PYGZus{}hist}\PYG{o}{.}\PYG{n}{tolist}\PYG{p}{())}
+    \PYG{n}{f\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[}\PYG{n}{f} \PYG{k}{for} \PYG{n}{f}\PYG{p}{,} \PYG{n}{\PYGZus{}} \PYG{o+ow}{in} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n}{combined}\PYG{p}{)][:}\PYG{l+m+mi}{50}\PYG{p}{]}
+    \PYG{n}{x\PYGZus{}hist} \PYG{o}{=} \PYG{p}{[}\PYG{n}{x} \PYG{k}{for} \PYG{n}{\PYGZus{}}\PYG{p}{,} \PYG{n}{x} \PYG{o+ow}{in} \PYG{n+nb}{sorted}\PYG{p}{(}\PYG{n}{combined}\PYG{p}{)][:}\PYG{l+m+mi}{50}\PYG{p}{]}
+    \PYG{k}{return} \PYG{n}{f\PYGZus{}hist}\PYG{p}{,} \PYG{n}{x\PYGZus{}hist}
+
+\PYG{k}{if} \PYG{n+nv+vm}{\PYGZus{}\PYGZus{}name\PYGZus{}\PYGZus{}} \PYG{o}{==} \PYG{l+s+s2}{\PYGZdq{}\PYGZus{}\PYGZus{}main\PYGZus{}\PYGZus{}\PYGZdq{}}\PYG{p}{:}
+    \PYG{c+c1}{\PYGZsh{} TOT\PYGZus{}EVALS = 100}
+    \PYG{c+c1}{\PYGZsh{} \PYGZus{}, \PYGZus{} = run()}
+    \PYG{c+c1}{\PYGZsh{} avg, std\PYGZus{}dev = [], []}
+    \PYG{c+c1}{\PYGZsh{} l\PYGZus{}k\PYGZus{}test = np.linspace(10, 1100, 20)}
+    \PYG{c+c1}{\PYGZsh{} for i in l\PYGZus{}k\PYGZus{}test:}
+    \PYG{c+c1}{\PYGZsh{}     L\PYGZus{}K = i}
+    \PYG{c+c1}{\PYGZsh{}     f\PYGZus{}hist, \PYGZus{} = run()}
+    \PYG{c+c1}{\PYGZsh{}     avg.append(np.mean(f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{}     std\PYGZus{}dev.append(np.std(f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{} pylab.figure()}
+    \PYG{c+c1}{\PYGZsh{} pylab.errorbar(l\PYGZus{}k\PYGZus{}test, np.array(avg) , yerr = np.array(std\PYGZus{}dev), c = \PYGZsq{}r\PYGZsq{}, fmt = \PYGZdq{}o\PYGZdq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.title(\PYGZsq{}Average Minimum f(x) with varying Markov Chain Length \PYGZdl{}L\PYGZus{}k\PYGZdl{}\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.xlabel(\PYGZsq{}Markov Chain Length \PYGZdl{}L\PYGZus{}k\PYGZdl{} (\PYGZsh{} f(x) Evaluations)\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.ylabel(\PYGZsq{}Average Minimum f(x)\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.show()}
+    \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+    \PYG{c+c1}{\PYGZsh{} avg, std\PYGZus{}dev = [], []}
+    \PYG{c+c1}{\PYGZsh{} d\PYGZus{}grad = np.linspace(0, 2, 10)}
+    \PYG{c+c1}{\PYGZsh{} for i in d\PYGZus{}grad:}
+    \PYG{c+c1}{\PYGZsh{}     D\PYGZus{}INIT\PYGZus{}MAG = i}
+    \PYG{c+c1}{\PYGZsh{}     f\PYGZus{}hist, \PYGZus{} = run()}
+    \PYG{c+c1}{\PYGZsh{}     avg.append(np.mean(f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{}     std\PYGZus{}dev.append(np.std(f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{} pylab.figure()}
+    \PYG{c+c1}{\PYGZsh{} pylab.errorbar(d\PYGZus{}grad, np.array(avg) , yerr = np.array(std\PYGZus{}dev), c = \PYGZsq{}r\PYGZsq{}, fmt = \PYGZdq{}o\PYGZdq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.title(\PYGZsq{}Average Minimum f(x) with varying magnitude of \PYGZdl{}D\PYGZdl{} matrix\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.xlabel(\PYGZsq{}Magnitude of diagonal element in \PYGZdl{}D\PYGZdl{} matrix\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.ylabel(\PYGZsq{}Average Minimum f(x)\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.show()}
+    \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+    \PYG{c+c1}{\PYGZsh{} f\PYGZus{}hist, \PYGZus{} = run()}
+    \PYG{c+c1}{\PYGZsh{} pickle.dump(file = open(\PYGZsq{}./SA\PYGZus{}scale\PYGZus{}f\PYGZus{}hist.pickle\PYGZsq{}, \PYGZsq{}wb\PYGZsq{}), obj = f\PYGZus{}hist)}
+    \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+    \PYG{c+c1}{\PYGZsh{} ADAPTIVE = False}
+    \PYG{c+c1}{\PYGZsh{} avg, std\PYGZus{}dev = [], []}
+    \PYG{c+c1}{\PYGZsh{} a\PYGZus{}grad = np.linspace(0, 1, 20)}
+    \PYG{c+c1}{\PYGZsh{} for i in a\PYGZus{}grad:}
+    \PYG{c+c1}{\PYGZsh{}     ALPHA = i}
+    \PYG{c+c1}{\PYGZsh{}     f\PYGZus{}hist, \PYGZus{} = run()}
+    \PYG{c+c1}{\PYGZsh{}     avg.append(np.mean(f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{}     std\PYGZus{}dev.append(np.std(f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{} pylab.figure()}
+    \PYG{c+c1}{\PYGZsh{} pylab.errorbar(a\PYGZus{}grad, np.array(avg) ,yerr = np.array(std\PYGZus{}dev), c = \PYGZsq{}r\PYGZsq{}, fmt = \PYGZdq{}o\PYGZdq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.title(\PYGZsq{}Average Minimum f(x) with ECS and varying alpha\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.xlabel(\PYGZsq{}Alpha\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.ylabel(\PYGZsq{}Average f(x)\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.show()}
+    \PYG{c+c1}{\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}\PYGZsh{}}
+    \PYG{c+c1}{\PYGZsh{} ADAPTIVE = False}
+    \PYG{c+c1}{\PYGZsh{} f\PYGZus{}hist, x\PYGZus{}hist = run()}
+    \PYG{c+c1}{\PYGZsh{} ADAPTIVE = True}
+    \PYG{c+c1}{\PYGZsh{} f\PYGZus{}hist\PYGZus{}a, x\PYGZus{}hist\PYGZus{}a = run()}
+    \PYG{c+c1}{\PYGZsh{} c\PYGZus{}chk = np.hstack((f\PYGZus{}hist\PYGZus{}a, f\PYGZus{}hist))}
+    \PYG{c+c1}{\PYGZsh{} bins = np.linspace(np.min(c\PYGZus{}chk), np.max(c\PYGZus{}chk), 30)}
+    \PYG{c+c1}{\PYGZsh{} pylab.figure()}
+    \PYG{c+c1}{\PYGZsh{} pylab.hist(f\PYGZus{}hist, bins, alpha=0.5)}
+    \PYG{c+c1}{\PYGZsh{} pylab.hist(f\PYGZus{}hist\PYGZus{}a, bins, alpha=0.5)}
+    \PYG{c+c1}{\PYGZsh{} pylab.title(\PYGZsq{}Histogram of per\PYGZhy{}run minimum f(x) with different cooling schemes\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.xlabel(\PYGZsq{}f(x)\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.ylabel(\PYGZsq{}Frequency\PYGZsq{})}
+    \PYG{c+c1}{\PYGZsh{} pylab.legend([\PYGZsq{}Exponential\PYGZsq{}, \PYGZsq{}Adaptive\PYGZsq{}])}
+    \PYG{c+c1}{\PYGZsh{} pylab.show()}
+    \PYG{k}{pass}
+\end{Verbatim}

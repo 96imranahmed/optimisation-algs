@@ -21,14 +21,14 @@ EPSILON = 0.001 # Absolute difference end critierion parameter
 EPSILON_RELATIVE = 0.001 # Relative difference end criterion parameter
 HIST_WIDTH = 0.35 # Histogram width
 TOT_EVALS = 200 # Number of runs for results
-METHOD = 'Evolutionary Strategies' # Name of current method
+METHOD = 'Evolution Strategies' # Name of current method
 GEN_WALK_ID = [0, 5, 10, -1] # Desired Generations to be printed
 M_L = 5 # Capped number of regions for histogram
 DELTA = 2.5 # For plotting - width of each f(x) calculation
 SHOW = False # Show plot
-IS_GLOBAL = True
-IS_CONTROL_INT = False
-IS_STRATEGY_INT = True
+IS_GLOBAL = True # Use Global or Local Recombination
+IS_CONTROL_INT = False # Use Intermediate Recombination for Control Variables
+IS_STRATEGY_INT = True # Use Intermediate Recombination for Strategy Parameters
 
 def f(x):
     #Evaluates Eggholder function for an arbitrarily long 'x'
@@ -47,10 +47,12 @@ def bound_x(x, e_s = 0):
     return x
 
 def update_x(x, c_matrix):
+    # Updates x with a random sample from a multivariate normal with a specific covariance matrix
     sample = np.random.multivariate_normal(np.zeros(DIM), c_matrix)
     return x + sample
 
 def update_strategy(sigma, rotation):
+    # Update strategy parameters with the method specified by Schwefel
     chi_nought = np.random.normal(0, 1)
     for i in range(DIM):
         sigma[i] = sigma[i]*np.exp(TAU_PRIME*chi_nought + TAU*np.random.normal(0, 1))
@@ -59,16 +61,18 @@ def update_strategy(sigma, rotation):
     return sigma, rotation
 
 def get_cov(a_matrix, sigma):
+    # Produce covariance matrix from rotation matrix (as specified in the notes)
     c_matrix = np.zeros(np.shape(a_matrix))
     for i in range(DIM):
         for j in range(DIM):
             if i == j:
-                c_matrix[i, j] = sigma[i]**2
+                c_matrix[i, j] = sigma[i]**2 # Ensure diagonals are the variance!
             else:
                 c_matrix[i, j] = 0.5*(sigma[i]**2 - sigma[j]**2)*np.tan(2*a_matrix[i,j])
     return c_matrix
 
 def get_combination(controls, sigmas, rotations):
+    # Produce a recombination given all the data of the current generation
     global IS_GLOBAL, IS_CONTROL_INT, IS_STRATEGY_INT
     is_global = IS_GLOBAL
     if len(controls) < 1:
@@ -82,7 +86,7 @@ def get_combination(controls, sigmas, rotations):
     idx_one = np.random.randint(0, len(controls))
     idx_two = np.random.randint(0, len(controls))
     
-    # Process Control Variables
+    # Process Control Variables - generate a consistent combination vector of ids
     for i in range(control_shape[1]):
         if is_global:
             c_out[i] = np.random.randint(0, len(controls))
@@ -92,8 +96,9 @@ def get_combination(controls, sigmas, rotations):
                 c_out[i] = idx_two
             else: 
                 c_out[i] = idx_one
-    
+
     # Process Strategy Parameters
+    # If possible, pass the vectors generated above (i.e. if local) to keep consistency when recombining
     if is_global:
         sigma = recombine(sigmas, is_global = True, is_intermediate = IS_STRATEGY_INT)
         rotation = recombine(rotations, is_global = True, is_intermediate = IS_STRATEGY_INT)
@@ -102,7 +107,7 @@ def get_combination(controls, sigmas, rotations):
         rotation = recombine_ids(rotations, c_out, is_global = False, is_intermediate = IS_STRATEGY_INT)
 
     if IS_CONTROL_INT and is_global:
-        c_out = recombine(controls, True, True)
+        c_out = recombine(controls, True, True) # No intuitive way of doing this consistently
     else:  
         c_out = recombine_ids(controls, c_out, is_global = is_global, is_intermediate = IS_CONTROL_INT)
     return np.squeeze(c_out), np.squeeze(sigma), rotation
@@ -129,6 +134,7 @@ def recombine_ids(vals, ids, is_global = True, is_intermediate = False):
         # Expecting (id_a, id_b)
         raise ValueError('Incorrect number of unique random ids - expecting <= 2, got', len(np.unique(ids)))
 
+    # Recombine as per provided ids
     val_out = None
     if not is_intermediate and is_global:
         temp = np.zeros(SHAPE)
@@ -167,6 +173,8 @@ def recombine(vals, is_global = True, is_intermediate = False):
         vals = vals[:, np.newaxis, :]
     SHAPE = np.shape(vals[0])
     ret_val = None
+
+    # Recombine stochastically
     if not is_intermediate and is_global:
         temp = np.zeros(SHAPE)
         for dim_idx in range(SHAPE[0]):
@@ -205,10 +213,11 @@ def recombine(vals, is_global = True, is_intermediate = False):
     return np.array(ret_val)       
 
 def evaluate(should_plot = False, ret_stats = False):
+    # Evaluate the function for one run
     global MU_CNT, L_CNT
-    eval_time = time.time()
+    eval_time = time.time() # For recording data
     stat_hist = []
-     #Initialisations
+    #Initialisations
     x_init = np.random.uniform(-1*LIM, LIM, DIM)
 
     x_star = None
@@ -223,11 +232,11 @@ def evaluate(should_plot = False, ret_stats = False):
         parents.append((rnd, (sigma, rotation), f(rnd)))
     
     env = BURN_IN
-    hist = []
+    hist = [] # For recording data
     de = np.inf
     re = np.inf
-    off_hist = []
-    f_hist = []
+    off_hist = [] # For recording data
+    f_hist = [] # For recording data
     while (env < OBJ_LIM):
         # SELECTION: Accept only top MU items
         parents = sorted(parents, key=lambda x: x[-1])[:MU_CNT]
@@ -240,9 +249,9 @@ def evaluate(should_plot = False, ret_stats = False):
             break
         cur = [i[0].tolist() for i in parents]
         f_cur = [i[-1] for i in parents]
-        f_hist.append((np.mean(f_cur), f_cur[0]))
-        hist = hist + cur
-        off_hist.append(cur)
+        f_hist.append((np.mean(f_cur), f_cur[0])) # For recording data
+        hist = hist + cur # For recording data
+        off_hist.append(cur) # For recording data
         control_arr = np.array([i[0] for i in parents])
         sigma_arr = np.array([i[1][0] for i in parents])
         rot_arr = np.array([i[1][1] for i in parents])
@@ -310,10 +319,11 @@ def evaluate(should_plot = False, ret_stats = False):
 
 def round_to_multiple(x, bucket = 10):
     for i in range(len(x)):
-        x[i] = int(bucket * round(float(x[i])/bucket))
+        x[i] = int(bucket * round(float(x[i])/bucket)) # Helper function for best K dissimilar
     return tuple(x.tolist())
 
 def run(should_plot = False):
+    # Runs code on multiple runs and provides useful statistics
     global TOT_EVALS, SHOW
     f_hist = []
     x_hist = []
@@ -376,6 +386,7 @@ def run(should_plot = False):
     return f_hist, x_hist
 
 if __name__ == "__main__":
+    # PLOTTING CODE #
     #################
     # IS_GLOBAL = True
     # for i in range(4):
