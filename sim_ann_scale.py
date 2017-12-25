@@ -3,6 +3,7 @@ import math
 import random
 import pylab
 import pickle
+import time
 
 DIM = 5
 LIM = 1
@@ -69,7 +70,10 @@ def check_accept(df, T, D, u):
         guess = random.random()
         return guess < p
 
-def evaluate(should_plot = False):
+def evaluate(should_plot = False, ret_stats = False):
+    eval_time = time.time()
+    stat_hist = []
+
     #Initialisations
     x_init = np.random.uniform(-1, 1, DIM)
 
@@ -155,6 +159,7 @@ def evaluate(should_plot = False):
                 did_find_sol = True
             else:
                 return_to_base += 1
+            stat_hist.append((f_x, f_star, time.time() - eval_time, env))
             if return_to_base > RESTART_THRESH:
                 x = x_star
                 eta_cur = 0
@@ -203,7 +208,10 @@ def evaluate(should_plot = False):
         pylab.xlabel('# Accepted Iterations')
         pylab.ylabel('Objective Function value f(x)')
         pylab.show()
-    return f_star, x_star
+    if ret_stats:
+        return f_star, x_star, stat_hist
+    else:
+        return f_star, x_star
 
 def round_to_multiple(x, bucket = 10):
     for i in range(len(x)):
