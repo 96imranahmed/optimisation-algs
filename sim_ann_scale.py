@@ -276,8 +276,8 @@ def run(should_plot = False):
             pylab.ylabel('$x_{2}$')
             pylab.show()
     combined = zip(f_hist.tolist(), x_hist.tolist())
-    f_hist = [f for f, _ in sorted(combined)][:25]
-    x_hist = [x for _, x in sorted(combined)][:25]
+    f_hist = [f for f, _ in sorted(combined)][:50]
+    x_hist = [x for _, x in sorted(combined)][:50]
     return f_hist, x_hist
 
 if __name__ == "__main__":
