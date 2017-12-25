@@ -27,7 +27,7 @@ M_L = 5 # Capped number of regions for histogram
 DELTA = 2.5 # For plotting - width of each f(x) calculation
 SHOW = False # Show plot
 IS_GLOBAL = True
-IS_CONTROL_INT = True
+IS_CONTROL_INT = False
 IS_STRATEGY_INT = True
 
 def f(x):
@@ -536,17 +536,17 @@ if __name__ == "__main__":
     #     pylab.legend(['Discrete', 'Intermediate'])
     #     pylab.show()
     ################
-    TOT_EVALS = 30
-    avg, std_dev = [], []
-    w = np.linspace(0, 0.5, 11) #Go to 2sigma
-    for i in w:
-        OMEGA = i
-        f_hist, _ = run()
-        avg.append(np.mean(f_hist))
-        std_dev.append(np.std(f_hist))
-    pylab.figure()
-    pylab.errorbar(w, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
-    pylab.title('Average Minimum f(x) with varying $\omega$')
-    pylab.xlabel('$\omega$')
-    pylab.ylabel('Average Minimum f(x)')
-    pylab.show()
+    # TOT_EVALS = 30
+    # avg, std_dev = [], []
+    # w = np.linspace(0, 0.5, 11) #Go to 2sigma
+    # for i in w:
+    #     OMEGA = i
+    #     f_hist, _ = run()
+    #     avg.append(np.mean(f_hist))
+    #     std_dev.append(np.std(f_hist))
+    # pylab.figure()
+    # pylab.errorbar(w, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
+    # pylab.title('Average Minimum f(x) with varying $\omega$')
+    # pylab.xlabel('$\omega$')
+    # pylab.ylabel('Average Minimum f(x)')
+    # pylab.show()

@@ -7,10 +7,14 @@ import matplotlib.pyplot as plt
 import es
 import sim_ann_scale
 
-def parse(in_arr, idx_compare, idx_out, limit):
+def parse(in_arr, idx_compare, idx_out, limit, is_greater = False):
     ret_vals = []
     comp_arr = [i[idx_compare] for i in in_arr]
-    idx_end = np.argwhere(np.array(comp_arr) < limit)
+    idx_end = 0
+    if is_greater:
+        idx_end = np.argwhere(np.array(comp_arr) > limit)
+    else:
+        idx_end = np.argwhere(np.array(comp_arr) < limit)
     end_id = -1
     if len(idx_end) == 0:
         return None
@@ -21,7 +25,7 @@ def parse(in_arr, idx_compare, idx_out, limit):
         ret_vals.append(out_arr[:end_id+1])
     return ret_vals
 
-DIM = 2
+DIM = 5
 SHOULD_PLOT = False
 
 
@@ -37,8 +41,10 @@ while i < 100:
     print(i)
     f_es, x_es, stats_es = es.evaluate(False, True)
     f_sa, x_sa, stats_sa = sim_ann_scale.evaluate(False, True)
-    es_p = parse(stats_es, 1, [1, 3, 2], -959)
-    sa_p = parse(stats_sa, 1, [1, 3, 2], -959)
+    es_p = parse(stats_es, 3, [1, 3, 2], 99999, True) # Evaluate on 5D case
+    sa_p = parse(stats_sa, 3, [1, 3, 2], 99999, True)
+    # es_p = parse(stats_es, 1, [1, 3, 2], -959)
+    # sa_p = parse(stats_sa, 1, [1, 3, 2], -959) For 2D Case
     if es_p and sa_p:
         mean_time_sa.append(sa_p[2][-1])
         mean_time_es.append(es_p[2][-1])
