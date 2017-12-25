@@ -268,26 +268,26 @@ def run(should_plot = False):
             pylab.ylabel('$x_{2}$')
             pylab.show()
     combined = zip(f_hist.tolist(), x_hist.tolist())
-    f_hist = [f for f, _ in sorted(combined)][:25]
-    x_hist = [x for _, x in sorted(combined)][:25]
+    f_hist = [f for f, _ in sorted(combined)][:50]
+    x_hist = [x for _, x in sorted(combined)][:50]
     return f_hist, x_hist
 
 if __name__ == "__main__":
-    TOT_EVALS = 100
-    _, _ = run()
-    avg, std_dev = [], []
-    l_k_test = np.linspace(10, 1100, 20)
-    for i in l_k_test:
-        L_K = i
-        f_hist, _ = run()
-        avg.append(np.mean(f_hist))
-        std_dev.append(np.std(f_hist))
-    pylab.figure() 
-    pylab.errorbar(l_k_test, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
-    pylab.title('Average Minimum f(x) with varying Markov Chain Length $L_k$')
-    pylab.xlabel('Markov Chain Length $L_k$ (# f(x) Evaluations)')
-    pylab.ylabel('Average Minimum f(x)')
-    pylab.show()
+    TOT_EVALS = 200
+    # _, _ = run()
+    # avg, std_dev = [], []
+    # l_k_test = np.linspace(10, 1100, 20)
+    # for i in l_k_test:
+    #     L_K = i
+    #     f_hist, _ = run()
+    #     avg.append(np.mean(f_hist))
+    #     std_dev.append(np.std(f_hist))
+    # pylab.figure() 
+    # pylab.errorbar(l_k_test, np.array(avg) , yerr = np.array(std_dev), c = 'r', fmt = "o")
+    # pylab.title('Average Minimum f(x) with varying Markov Chain Length $L_k$')
+    # pylab.xlabel('Markov Chain Length $L_k$ (# f(x) Evaluations)')
+    # pylab.ylabel('Average Minimum f(x)')
+    # pylab.show()
     ##################
     # avg, std_dev = [], []
     # d_grad = np.linspace(0, 2, 10)
@@ -306,20 +306,20 @@ if __name__ == "__main__":
     # f_hist, _ = run()
     # pickle.dump(file = open('./SA_scale_f_hist.pickle', 'wb'), obj = f_hist)
     ###################
-    # ADAPTIVE = False
-    # avg, std_dev = [], []
-    # a_grad = np.linspace(0, 1, 20)
-    # for i in a_grad:
-    #     ALPHA = i
-    #     f_hist, _ = run()
-    #     avg.append(np.mean(f_hist))
-    #     std_dev.append(np.std(f_hist))
-    # pylab.figure()
-    # pylab.errorbar(a_grad, np.array(avg) ,yerr = np.array(std_dev), c = 'r', fmt = "o")
-    # pylab.title('Average Minimum f(x) with ECS and varying alpha')
-    # pylab.xlabel('Alpha')
-    # pylab.ylabel('Average f(x)')
-    # pylab.show()
+    ADAPTIVE = False
+    avg, std_dev = [], []
+    a_grad = np.linspace(0, 1, 20)
+    for i in a_grad:
+        ALPHA = i
+        f_hist, _ = run()
+        avg.append(np.mean(f_hist))
+        std_dev.append(np.std(f_hist))
+    pylab.figure()
+    pylab.errorbar(a_grad, np.array(avg) ,yerr = np.array(std_dev), c = 'r', fmt = "o")
+    pylab.title('Average Minimum f(x) with ECS and varying alpha')
+    pylab.xlabel('Alpha')
+    pylab.ylabel('Average f(x)')
+    pylab.show()
     ###################
     # ADAPTIVE = False
     # f_hist, x_hist = run()
