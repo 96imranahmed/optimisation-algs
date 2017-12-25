@@ -43,17 +43,21 @@ mean_f_sa = []
 mean_f_es = []
 i = 0
 print('Starting...')
-while i < 100:
+while i < 3:
     print(' Processing:', i, end='\r')
     f_es, x_es, stats_es = es.evaluate(False, True)
     f_sa, x_sa, stats_sa = sim_ann_scale.evaluate(False, True)
-    es_p = parse(stats_es, 3, [1, 3, 2], 9999, True) # Evaluate on 5D case
     sa_p = parse(stats_sa, 3, [1, 3, 2], 9999, True)
+    time_end = sa_p[-1][-1]
+    es_p = parse(stats_es, 2, [1, 3, 2], time_end, True) # Runtime-adjusted on 5D case
+   
+    # es_p = parse(stats_es, 3, [1, 3, 2], 9999, True) # Evaluate on 5D case
+    # sa_p = parse(stats_sa, 3, [1, 3, 2], 9999, True)
     # es_p = parse(stats_es, 1, [1, 3, 2], -959)
     # sa_p = parse(stats_sa, 1, [1, 3, 2], -959) For 2D Case
     if es_p and sa_p:
-        mean_f_sa.append(f_sa)
-        mean_f_es.append(f_es)
+        mean_f_sa.append(sa_p[0][-1])
+        mean_f_es.append(es_p[0][-1])
         mean_time_sa.append(sa_p[2][-1])
         mean_time_es.append(es_p[2][-1])
         mean_evals_sa.append(sa_p[1][-1])
@@ -78,7 +82,7 @@ bins = np.linspace(np.min(c_chk), np.max(c_chk), 15)
 pylab.figure()
 pylab.hist(mean_f_sa, bins, alpha=0.5)
 pylab.hist(mean_f_es, bins, alpha=0.5)
-pylab.title('Histogram of per-run minimum f(x) of SA vs. ES')
+pylab.title('Histogram of per-run minimum f(x) of SA vs. Time-adjusted ES')
 pylab.xlabel('f(x)')
 pylab.ylabel('Frequency')
 pylab.legend(['SA', 'ES'])
