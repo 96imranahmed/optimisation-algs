@@ -204,8 +204,10 @@ def recombine(vals, is_global = True, is_intermediate = False):
         ret_val = temp
     return np.array(ret_val)       
 
-def evaluate(should_plot = False):
+def evaluate(should_plot = False, ret_stats = False):
     global MU_CNT, L_CNT
+    eval_time = time.time()
+    stat_hist = []
      #Initialisations
     x_init = np.random.uniform(-1*LIM, LIM, DIM)
 
@@ -239,6 +241,7 @@ def evaluate(should_plot = False):
         cur = [i[0].tolist() for i in parents]
         f_cur = [i[-1] for i in parents]
         f_hist.append((np.mean(f_cur), f_cur[0]))
+        stat_hist.append((np.mean(f_cur), f_star, time.time() - eval_time, env))
         hist = hist + cur
         off_hist.append(cur)
         control_arr = np.array([i[0] for i in parents])
@@ -300,7 +303,10 @@ def evaluate(should_plot = False):
         pylab.ylabel('Objective Function value f(x)')
         pylab.legend(['Average', 'Minimum'])
         pylab.show()
-    return f_star, x_star
+    if ret_stats:
+        return f_star, x_star, stat_hist
+    else:
+        return f_star, x_star
 
 def round_to_multiple(x, bucket = 10):
     for i in range(len(x)):
