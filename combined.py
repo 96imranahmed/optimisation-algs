@@ -43,7 +43,7 @@ mean_f_sa = []
 mean_f_es = []
 i = 0
 print('Starting...')
-while i < 3:
+while i < 100:
     print(' Processing:', i, end='\r')
     f_es, x_es, stats_es = es.evaluate(False, True)
     f_sa, x_sa, stats_sa = sim_ann_scale.evaluate(False, True)
